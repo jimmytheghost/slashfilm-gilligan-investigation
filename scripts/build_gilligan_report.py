@@ -295,7 +295,7 @@ def report(metrics, charts):
     top_current=sorted(metrics['current_tv'].items(),key=lambda x:x[1],reverse=True)[:5]
     
     # Cover
-    cover_title=Paragraph("Is SlashFilm really obsessed with<br/>Gilligan's Island?", ParagraphStyle("cover", parent=s['h1'], textColor=HexColor(CREAM), fontSize=43, leading=46, spaceAfter=18))
+    cover_title=Paragraph("Is Slashfilm Actually Obsessed With<br/>Gilligan's Island?", ParagraphStyle("cover", parent=s['h1'], textColor=HexColor(CREAM), fontSize=43, leading=46, spaceAfter=18))
     cover_body=Paragraph("A few years ago, I started noticing something weird:<br/>SlashFilm kept publishing stories about Gilligan's Island.<br/>The show. The cast. The whole Gilligan Universe.<br/>So I had an AI catalogue six years of headlines<br/>to find out whether I was imagining it.", ParagraphStyle("coverbody", parent=s['body'], textColor=HexColor('#D5E5E0'), fontSize=12.2, leading=17, spaceAfter=16))
     cover_date = Paragraph("FROM 2024 THROUGH<br/>AUG. 2, 2026, THERE WERE", ParagraphStyle("coverdate", parent=s['kicker'], fontName=LABEL_FONT, fontSize=12, leading=16, textColor=HexColor(NAVY), spaceAfter=0))
     cover_number = Paragraph(str(expanded), ParagraphStyle("covernumber", parent=s['h1'], fontName=DISPLAY_FONT, fontSize=54, leading=54, textColor=HexColor(NAVY), spaceAfter=0))
