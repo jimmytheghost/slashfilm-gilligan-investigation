@@ -34,8 +34,8 @@ INK = "#14252B"
 GOLD = "#E3AD40"
 MUTED = "#60747A"
 
-DISPLAY_FONT = "BigCaslon"
-TEXT_FONT = "SFNS"
+DISPLAY_FONT = "RobotoBlack"
+TEXT_FONT = "BigCaslon"
 LABEL_FONT = "DINCondensed"
 
 GILLIGAN_CAST = ["Alan Hale Jr.", "Bob Denver", "Russell Johnson", "Tina Louise", "Jim Backus", "Natalie Schafer", "Dawn Wells"]
@@ -127,8 +127,8 @@ def save_chart(fig, name):
 
 
 def register_fonts():
-    pdfmetrics.registerFont(TTFont(DISPLAY_FONT, "/System/Library/Fonts/Supplemental/BigCaslon.ttf"))
-    pdfmetrics.registerFont(TTFont(TEXT_FONT, "/System/Library/Fonts/SFNS.ttf"))
+    pdfmetrics.registerFont(TTFont(DISPLAY_FONT, str(ROOT / "assets" / "fonts" / "Roboto-Black.ttf")))
+    pdfmetrics.registerFont(TTFont(TEXT_FONT, "/System/Library/Fonts/Supplemental/BigCaslon.ttf"))
     pdfmetrics.registerFont(TTFont(LABEL_FONT, "/System/Library/Fonts/Supplemental/DIN Condensed Bold.ttf"))
     plt.rcParams.update({"font.family": "STIXGeneral", "axes.titleweight": "normal"})
 
@@ -207,11 +207,11 @@ def styles():
     base=getSampleStyleSheet()
     return {
         "kicker": ParagraphStyle("kicker", parent=base["Normal"], fontName=LABEL_FONT, fontSize=10, leading=11, textColor=HexColor(CORAL), spaceAfter=9, uppercase=True, tracking=1.8),
-        "h1": ParagraphStyle("h1", parent=base["Normal"], fontName=DISPLAY_FONT, fontSize=38, leading=41, textColor=HexColor(NAVY), spaceAfter=13),
-        "h2": ParagraphStyle("h2", parent=base["Normal"], fontName=DISPLAY_FONT, fontSize=26, leading=29, textColor=HexColor(NAVY), spaceBefore=2, spaceAfter=10),
-        "body": ParagraphStyle("body", parent=base["Normal"], fontName=TEXT_FONT, fontSize=10.8, leading=15, textColor=HexColor(INK), spaceAfter=9),
-        "small": ParagraphStyle("small", parent=base["Normal"], fontName=TEXT_FONT, fontSize=8.4, leading=11, textColor=HexColor(MUTED), spaceAfter=5),
-        "callout": ParagraphStyle("callout", parent=base["Normal"], fontName=DISPLAY_FONT, fontSize=19, leading=22, textColor=HexColor(NAVY), backColor=HexColor(SAND), borderPadding=16, spaceAfter=13),
+        "h1": ParagraphStyle("h1", parent=base["Normal"], fontName=DISPLAY_FONT, fontSize=34, leading=37, textColor=HexColor(NAVY), spaceAfter=15),
+        "h2": ParagraphStyle("h2", parent=base["Normal"], fontName=DISPLAY_FONT, fontSize=25, leading=28, textColor=HexColor(NAVY), spaceBefore=2, spaceAfter=12),
+        "body": ParagraphStyle("body", parent=base["Normal"], fontName=TEXT_FONT, fontSize=14, leading=18.5, textColor=HexColor(INK), spaceAfter=11),
+        "small": ParagraphStyle("small", parent=base["Normal"], fontName=TEXT_FONT, fontSize=11.5, leading=14.5, textColor=HexColor(MUTED), spaceAfter=7),
+        "callout": ParagraphStyle("callout", parent=base["Normal"], fontName=DISPLAY_FONT, fontSize=18, leading=22, textColor=HexColor(NAVY), backColor=HexColor(SAND), borderPadding=18, spaceAfter=14),
     }
 
 
@@ -241,7 +241,7 @@ def chart_image(path, max_width, max_height):
 def report(metrics, charts):
     OUT.parent.mkdir(parents=True, exist_ok=True); TABLES.parent.mkdir(parents=True, exist_ok=True)
     TABLES.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
-    doc=SimpleDocTemplate(str(OUT),pagesize=landscape(letter),rightMargin=.64*inch,leftMargin=.64*inch,topMargin=.58*inch,bottomMargin=.58*inch)
+    doc=SimpleDocTemplate(str(OUT),pagesize=landscape(letter),rightMargin=.78*inch,leftMargin=.78*inch,topMargin=.68*inch,bottomMargin=.66*inch)
     s=styles(); story=[]
     expanded=sum(metrics['annual'][y]['expanded'] for y in FOCAL_YEARS)
     direct=sum(metrics['direct'][y] for y in FOCAL_YEARS)
@@ -251,7 +251,7 @@ def report(metrics, charts):
     
     # Cover
     cover_title=Paragraph("Is SlashFilm really obsessed with<br/>Gilligan's Island?", ParagraphStyle("cover", parent=s['h1'], textColor=HexColor(CREAM), fontSize=43, leading=46, spaceAfter=18))
-    cover_body=Paragraph("A curiosity-driven audit of 68,000+ SlashFilm stories, built to test a simple question: did a 1960s sitcom genuinely become a recurring modern coverage subject, or did it merely become memorable enough to create a frequency illusion?", ParagraphStyle("coverbody", parent=s['body'], textColor=HexColor('#D5E5E0'), fontSize=12.2, leading=17, spaceAfter=16))
+    cover_body=Paragraph("A curiosity-driven audit of 68,000+ SlashFilm stories,<br/>built to test a simple question: did a 1960s sitcom<br/>genuinely become a recurring modern coverage subject,<br/>or did it merely become memorable enough to create a<br/>frequency illusion?", ParagraphStyle("coverbody", parent=s['body'], textColor=HexColor('#D5E5E0'), fontSize=12.2, leading=17, spaceAfter=16))
     cover_stat=Paragraph(f"<b>{expanded}</b><br/>Gilligan-related stories<br/>from 2024 through Aug. 2, 2026", ParagraphStyle("coverstat", parent=s['h2'], textColor=HexColor(NAVY), backColor=HexColor(SAND), fontSize=23, leading=27, borderPadding=18))
     cover_meta=Paragraph(f"{shares:.2f}% of all {focal_total:,} focal-period stories.\nThe spike is real, recent, and measurable.", ParagraphStyle("covermeta", parent=s['small'], textColor=HexColor('#D5E5E0'), fontSize=10.2, leading=14))
     cover_left = [p("A DATA INVESTIGATION", ParagraphStyle("coverkick", parent=s['kicker'], textColor=HexColor(CORAL))), cover_title, cover_body, cover_meta]
@@ -264,7 +264,11 @@ def report(metrics, charts):
               p("The premise is not that SlashFilm should cover one show instead of another. It is a narrower question: does Gilligan's Island appear often enough in the site's output to qualify as an unusual editorial pattern?",s['body']),
               p("Two measurements keep the test fair. <b>Direct Gilligan's Island</b> means stories centered on the show. <b>Expanded Gilligan universe</b> includes those stories plus articles centered on the seven principal cast members. The expanded count answers the original observation; the direct count prevents cast coverage from being hidden inside a single show label.",s['body']),
               p("The report treats 2024-2026 as the comparison window because those years have the most complete headline-based subject normalization. 2020-2023 appears only as historical context for the Gilligan trend.",s['body']),
-              p("Headline classification is intentionally transparent: the title and URL determine the primary subject; ambiguous rows use an auditable headline fallback. Exact aliases, not broad subject buckets, drive the selected-franchise comparisons.",s['small']), PageBreak()]
+              p("Headline classification is intentionally transparent: the title and URL determine the primary subject; ambiguous rows use an auditable headline fallback. Exact aliases, not broad subject buckets, drive the selected-franchise comparisons.",s['small']), Spacer(1,.18*inch)]
+    evidence = Table([[p("68,398", ParagraphStyle("metric", parent=s['h2'], fontSize=24, leading=25)), p("21,932", ParagraphStyle("metric2", parent=s['h2'], fontSize=24, leading=25)), p("2024-2026", ParagraphStyle("metric3", parent=s['h2'], fontSize=24, leading=25))],
+                      [p("Catalogued stories", s['small']), p("Stories in the focal window", s['small']), p("Primary comparison period", s['small'])]], colWidths=[3.15*inch,3.15*inch,3.15*inch])
+    evidence.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,-1),HexColor('#F6F0DF')),('BOX',(0,0),(-1,-1),.4,HexColor('#D7CBA5')),('INNERGRID',(0,0),(-1,-1),.3,HexColor('#D7CBA5')),('LEFTPADDING',(0,0),(-1,-1),14),('RIGHTPADDING',(0,0),(-1,-1),14),('TOPPADDING',(0,0),(-1,-1),12),('BOTTOMPADDING',(0,0),(-1,-1),12)]))
+    story += [evidence, PageBreak()]
     # Timeline
     story += [p("02 / Exhibit A",s['kicker']),p("The Gilligan spike is recent",s['h2']),chart_image(charts['annual'],9.55*inch,3.35*inch),
               p("The six-year time series does not support a steady, background level of Gilligan coverage. It instead shows a sharp emergence in 2024, followed by sustained coverage in 2025 and 2026 year-to-date.",s['body']),
