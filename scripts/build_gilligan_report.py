@@ -15,6 +15,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (Image, KeepTogether, PageBreak, Paragraph,
                                 SimpleDocTemplate, Spacer, Table, TableStyle)
+from PIL import Image as PILImage
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
@@ -166,7 +167,8 @@ def chart_monthly(metrics):
     months = list(vals); counts = list(vals.values())
     fig, ax = plt.subplots(figsize=(10, 3.61), facecolor=CREAM); ax.set_facecolor(CREAM)
     ax.plot(range(len(months)), counts, color=CORAL, linewidth=2.8, marker="o", markersize=4)
-    tick_indices = [i for i,m in enumerate(months) if m.endswith("-01") or m.endswith("-07") or i==len(months)-1]
+    # Evenly space four labels; do not let the partial-year endpoint collide with January.
+    tick_indices = sorted({round(i * (len(months) - 1) / 3) for i in range(4)})
     ax.set_xticks(tick_indices, [months[i] for i in tick_indices], rotation=0)
     ax.set_ylim(0, max(counts)*1.2); ax.grid(axis="y", alpha=.16); ax.spines[["top","right","left"]].set_visible(False)
     ax.tick_params(colors=INK); ax.set_ylabel("Stories", color=INK)
@@ -228,6 +230,14 @@ def header_footer(canvas, doc):
 def p(text, style): return Paragraph(text, style)
 
 
+def chart_image(path, max_width, max_height):
+    """Fit rendered charts without ever stretching them."""
+    with PILImage.open(path) as image:
+        width, height = image.size
+    scale = min(max_width / width, max_height / height)
+    return Image(str(path), width=width * scale, height=height * scale)
+
+
 def report(metrics, charts):
     OUT.parent.mkdir(parents=True, exist_ok=True); TABLES.parent.mkdir(parents=True, exist_ok=True)
     TABLES.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
@@ -256,11 +266,11 @@ def report(metrics, charts):
               p("The report treats 2024-2026 as the comparison window because those years have the most complete headline-based subject normalization. 2020-2023 appears only as historical context for the Gilligan trend.",s['body']),
               p("Headline classification is intentionally transparent: the title and URL determine the primary subject; ambiguous rows use an auditable headline fallback. Exact aliases, not broad subject buckets, drive the selected-franchise comparisons.",s['small']), PageBreak()]
     # Timeline
-    story += [p("02 / Exhibit A",s['kicker']),p("The Gilligan spike is recent",s['h2']),Image(str(charts['annual']),width=9.55*inch,height=3.35*inch),
+    story += [p("02 / Exhibit A",s['kicker']),p("The Gilligan spike is recent",s['h2']),chart_image(charts['annual'],9.55*inch,3.35*inch),
               p("The six-year time series does not support a steady, background level of Gilligan coverage. It instead shows a sharp emergence in 2024, followed by sustained coverage in 2025 and 2026 year-to-date.",s['body']),
               p("The raw annual counts are: 0 (2020), 2 (2021), 0 (2022), 1 (2023), 110 (2024), 50 (2025), and 44 through Aug. 2, 2026.",s['small']),PageBreak()]
     # Scoreboard
-    story += [p("03 / The scoreboard",s['kicker']),p("Gilligan is not Marvel. That is not the point.",s['h2']),Image(str(charts['scoreboard']),width=9.55*inch,height=4.55*inch),
+    story += [p("03 / The scoreboard",s['kicker']),p("Gilligan is not Marvel. That is not the point.",s['h2']),chart_image(charts['scoreboard'],9.55*inch,4.55*inch),
               p("Broad ecosystems such as Marvel, Star Trek, and Star Wars naturally dominate SlashFilm's output. The useful comparison is with individual shows and franchises. In that company, the expanded Gilligan universe is not a trivial tail event.",s['body']),PageBreak()]
     # direct expanded
     table_data=[["Metric","2024","2025","2026 YTD","Focal total"], ["Direct Gilligan's Island",*[metrics['direct'][y] for y in FOCAL_YEARS],direct], ["Expanded Gilligan universe",*[metrics['annual'][y]['expanded'] for y in FOCAL_YEARS],expanded]]
@@ -269,13 +279,13 @@ def report(metrics, charts):
     story += [p("04 / Two ways to count it",s['kicker']),p("The island alone, and the island plus its orbit",s['h2']),t,Spacer(1,.18*inch),
               p("The difference between these lines is the story. In 2026, Alan Hale Jr. becomes the largest single Gilligan-related subject, even when the article is about The Love Boat, a Western, or a forgotten movie role. That is why the expanded measure belongs in the report - but it is displayed separately from direct show coverage.",s['body']),PageBreak()]
     # cadence
-    story += [p("05 / Cadence",s['kicker']),p("This is recurring coverage, not one nostalgia package",s['h2']),Image(str(charts['monthly']),width=9.55*inch,height=3.45*inch),
+    story += [p("05 / Cadence",s['kicker']),p("This is recurring coverage, not one nostalgia package",s['h2']),chart_image(charts['monthly'],9.55*inch,3.45*inch),
               p("The monthly series shows repeated coverage across many months rather than a single anniversary or reboot event. The 2024 surge is particularly concentrated from July through December; 2026 reaches 15 stories in June alone.",s['body']),PageBreak()]
     # cast
-    story += [p("06 / Who is actually being covered?",s['kicker']),p("Gilligan is a show, but the cast is the engine",s['h2']),Image(str(charts['cast']),width=9.55*inch,height=3.75*inch),
+    story += [p("06 / Who is actually being covered?",s['kicker']),p("Gilligan is a show, but the cast is the engine",s['h2']),chart_image(charts['cast'],9.55*inch,3.75*inch),
               p("The direct-show label is the biggest single bucket, but cast-member articles turn the property into a much wider content reservoir. The report keeps those two forms of coverage visible rather than treating them as interchangeable.",s['body']),PageBreak()]
     # Current TV
-    story += [p("07 / The control group",s['kicker']),p("Where are the big current shows?",s['h2']),Image(str(charts['current_tv']),width=9.55*inch,height=4.55*inch),
+    story += [p("07 / The control group",s['kicker']),p("Where are the big current shows?",s['h2']),chart_image(charts['current_tv'],9.55*inch,4.55*inch),
               p("This chart compares Gilligan with a deliberately mixed group of award-recognized and culturally visible recent TV. It is not a measure of popularity; it measures SlashFilm article frequency. That distinction matters: coverage volume reflects editorial and search strategy, not audience quality or cultural worth.",s['body']),
               p("The control group includes 2024 Emmy winners such as <i>Shogun</i>, <i>Hacks</i>, and <i>Baby Reindeer</i>, plus 2025 winners <i>The Pitt</i>, <i>The Studio</i>, and <i>Adolescence</i>. Popular-series controls include <i>Euphoria</i>, <i>Outer Banks</i>, <i>Bridgerton</i>, <i>The Last of Us</i>, <i>Stranger Things</i>, <i>The White Lotus</i>, <i>Severance</i>, and <i>The Bear</i>.",s['small']),PageBreak()]
     # Findngs
