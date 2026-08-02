@@ -297,7 +297,7 @@ def report(metrics, charts):
     # Cover
     cover_title=Paragraph("Is SlashFilm really obsessed with<br/>Gilligan's Island?", ParagraphStyle("cover", parent=s['h1'], textColor=HexColor(CREAM), fontSize=43, leading=46, spaceAfter=18))
     cover_body=Paragraph("A few years ago, I started noticing something weird:<br/>SlashFilm kept publishing stories about Gilligan's Island.<br/>The show. The cast. The whole Gilligan Universe.<br/>So I had an AI catalogue six years of headlines<br/>to find out whether I was imagining it.", ParagraphStyle("coverbody", parent=s['body'], textColor=HexColor('#D5E5E0'), fontSize=12.2, leading=17, spaceAfter=16))
-    cover_stat=Paragraph(f"<b>{expanded}</b><br/>Gilligan-related stories<br/>from 2024 through Aug. 2, 2026", ParagraphStyle("coverstat", parent=s['h2'], textColor=HexColor(NAVY), backColor=HexColor(SAND), fontSize=23, leading=27, borderPadding=18))
+    cover_stat=Paragraph(f"<font name={DISPLAY_FONT} size=38>{expanded}</font><br/><font name={LABEL_FONT} size=15>Gilligan-Related Stories</font><br/><font name={TEXT_FONT} size=11>From 2024 Through Aug. 2, 2026</font>", ParagraphStyle("coverstat", parent=s['h2'], textColor=HexColor(NAVY), backColor=HexColor(SAND), leading=20, borderPadding=18))
     cover_meta=Paragraph(f"{shares:.2f}% of all {focal_total:,} stories from 2024 through Aug. 2, 2026.\n68,398 headlines later: I was not imagining it.", ParagraphStyle("covermeta", parent=s['small'], textColor=HexColor('#D5E5E0'), fontSize=10.2, leading=14))
     cover_left = [p("A DATA INVESTIGATION", ParagraphStyle("coverkick", parent=s['kicker'], textColor=HexColor(CORAL))), cover_title, cover_body, cover_meta]
     cover_right = [Spacer(1, 1.15*inch), cover_stat, Spacer(1, .18*inch), p("OBSERVED PATTERN<br/>2024-2026", ParagraphStyle("coverlabel", parent=s['kicker'], textColor=HexColor(SEA), alignment=1))]
@@ -305,7 +305,7 @@ def report(metrics, charts):
     cover_table.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP'),('LEFTPADDING',(0,0),(-1,-1),0),('RIGHTPADDING',(0,0),(-1,-1),0),('TOPPADDING',(0,0),(-1,-1),.65*inch),('BOTTOMPADDING',(0,0),(-1,-1),0)]))
     story += [cover_table, Spacer(1,.1*inch), p("Built from SlashFilm headlines, publication dates, and a frankly excessive amount of categorizing. August 2026 is year-to-date.", ParagraphStyle("coverfoot",parent=s['small'],textColor=HexColor('#AFC9C3'))), PageBreak()]
     # Framing and method
-    story += [p("01 / The question",s['kicker']),p("Was I imagining this?",s['h2']),
+    story += [p("01 / The Question",s['kicker']),p("Was I Imagining This?",s['h2']),
               p("At first, this felt like one of those brain tricks. You notice a thing once, then suddenly it seems to be everywhere. But Gilligan stories kept showing up. Not just the island itself, either. Alan Hale Jr. Bob Denver. Natalie Schafer. The whole cast.",s['body']),
               p("So I had an AI agent catalogue 68,398 SlashFilm stories published from 2020 through Aug. 2, 2026. I counted stories directly about <b>Gilligan's Island</b>, then counted the larger <b>Gilligan Universe</b>: the show plus its seven main cast members.",s['body']),
               p("This is not a complaint that SlashFilm should cover <i>Euphoria</i> or <i>Outer Banks</i> instead. I do not have a preferred show in this fight. I just wanted to know whether a weird hunch had receipts.",s['body']),
@@ -315,30 +315,30 @@ def report(metrics, charts):
     evidence.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,-1),HexColor('#F6F0DF')),('BOX',(0,0),(-1,-1),.4,HexColor('#D7CBA5')),('INNERGRID',(0,0),(-1,-1),.3,HexColor('#D7CBA5')),('LEFTPADDING',(0,0),(-1,-1),14),('RIGHTPADDING',(0,0),(-1,-1),14),('TOPPADDING',(0,0),(-1,-1),12),('BOTTOMPADDING',(0,0),(-1,-1),12)]))
     story += [evidence, PageBreak()]
     # Timeline
-    story += [p("02 / Exhibit A",s['kicker']),p("The Gilligan spike is recent",s['h2']),chart_card(charts['annual'],9.55*inch,3.35*inch), Spacer(1,.12*inch),
+    story += [p("02 / Exhibit A",s['kicker']),p("The Gilligan Spike Is Recent",s['h2']),chart_card(charts['annual'],9.55*inch,3.35*inch), Spacer(1,.12*inch),
               text_card("For four years, this was basically nothing. Then SlashFilm published 110 Gilligan-related stories in 2024. The number dropped in 2025, but it did not disappear. And by Aug. 2, 2026, the site had already run 44 more.",s['body']),
               p("The raw annual counts: 0 (2020), 2 (2021), 0 (2022), 1 (2023), 110 (2024), 50 (2025), and 44 through Aug. 2, 2026.",s['small']),PageBreak()]
     # Scoreboard
-    story += [p("03 / The scoreboard",s['kicker']),p("Gilligan is not Marvel. That is not the point.",s['h2']),chart_card(charts['scoreboard'],9.55*inch,4.55*inch), Spacer(1,.12*inch),
+    story += [p("03 / The Scoreboard",s['kicker']),p("Gilligan Is Not Marvel. That Is Not the Point.",s['h2']),chart_card(charts['scoreboard'],9.55*inch,4.55*inch), Spacer(1,.12*inch),
               text_card("Marvel, Star Trek, and Star Wars are huge machines. Of course they get more coverage. The funny part is lower on the list: Gilligan Universe lands above <i>The Simpsons</i>, <i>Stranger Things</i>, <i>Harry Potter</i>, <i>The Pitt</i>, <i>Landman</i>, and <i>Breaking Bad</i> in this stretch of SlashFilm history.",s['body']),PageBreak()]
     # direct expanded
     table_data=[["Metric","2024","2025","2026 YTD","Focal total"], ["Direct Gilligan's Island",*[metrics['direct'][y] for y in FOCAL_YEARS],direct], ["Expanded Gilligan Universe",*[metrics['annual'][y]['expanded'] for y in FOCAL_YEARS],expanded]]
     t=Table(table_data,colWidths=[3.4*inch,1.55*inch,1.55*inch,1.55*inch,1.55*inch])
     t.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),HexColor(NAVY)),('TEXTCOLOR',(0,0),(-1,0),white),('FONTNAME',(0,0),(-1,0),DISPLAY_FONT),('FONTNAME',(0,1),(0,-1),LABEL_FONT),('FONTNAME',(1,1),(-1,-1),LABEL_FONT),('BACKGROUND',(0,2),(-1,2),HexColor(SAND)),('GRID',(0,0),(-1,-1),.35,HexColor('#C4D5D0')),('ALIGN',(1,0),(-1,-1),'CENTER'),('VALIGN',(0,0),(-1,-1),'MIDDLE'),('TOPPADDING',(0,0),(-1,-1),8),('BOTTOMPADDING',(0,0),(-1,-1),8)]))
-    story += [p("04 / Two ways to count it",s['kicker']),p("The island alone, and the island plus its orbit",s['h2']),t,Spacer(1,.18*inch),
+    story += [p("04 / Two Ways to Count It",s['kicker']),p("The Island Alone, and the Island Plus Its Orbit",s['h2']),t,Spacer(1,.18*inch),
               text_card("Here is the wrinkle: a Gilligan story is not always about Gilligan's Island. In 2026, Alan Hale Jr. is the biggest Gilligan-related subject even when the story is actually about <i>The Love Boat</i>, a Western, or some forgotten movie role. That is why both counts are on the page.",s['body']),Spacer(1,.18*inch)]
     orbit = Table([[p("105", ParagraphStyle("orbitnum", parent=s['h2'], fontSize=27, leading=29, textColor=HexColor(CORAL))), p("99", ParagraphStyle("orbitnum2", parent=s['h2'], fontSize=27, leading=29, textColor=HexColor(CORAL)))],
                    [p("direct-show stories", s['small']), p("cast-led stories added by the expanded measure", s['small'])]], colWidths=[4.7*inch,4.7*inch])
     orbit.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,-1),HexColor('#EDF5F2')),('BOX',(0,0),(-1,-1),.55,HexColor(SEA)),('INNERGRID',(0,0),(-1,-1),.35,HexColor('#B9DDD7')),('LEFTPADDING',(0,0),(-1,-1),16),('RIGHTPADDING',(0,0),(-1,-1),16),('TOPPADDING',(0,0),(-1,-1),11),('BOTTOMPADDING',(0,0),(-1,-1),11)]))
     story += [orbit, PageBreak()]
     # cadence
-    story += [p("05 / Cadence",s['kicker']),p("This is recurring coverage, not one nostalgia package",s['h2']),chart_card(charts['monthly'],9.55*inch,3.45*inch), Spacer(1,.12*inch),
+    story += [p("05 / Cadence",s['kicker']),p("This Is Recurring Coverage, Not One Nostalgia Package",s['h2']),chart_card(charts['monthly'],9.55*inch,3.45*inch), Spacer(1,.12*inch),
               text_card("This is not one anniversary package, one reboot announcement, or one editor going through a phase for a week. Gilligan coverage keeps coming back month after month. June 2026 alone had 15 stories.",s['body']),PageBreak()]
     # cast
-    story += [p("06 / Who is actually being covered?",s['kicker']),p("Gilligan is a show, but the cast is the engine",s['h2']),chart_card(charts['cast'],9.55*inch,3.75*inch), Spacer(1,.12*inch),
+    story += [p("06 / Who Is Actually Being Covered?",s['kicker']),p("Gilligan Is a Show, but the Cast Is the Engine",s['h2']),chart_card(charts['cast'],9.55*inch,3.75*inch), Spacer(1,.12*inch),
               text_card("The island is the biggest bucket. But the cast is what turns it into a deep well of stories: old TV roles, behind-the-scenes trivia, forgotten movies, other sitcoms. The Gilligan Universe is doing a lot of work here.",s['body']),PageBreak()]
     # Current TV
-    story += [p("07 / The control group",s['kicker']),p("Where Are the Big Current Shows?",s['h2']),chart_card(charts['current_tv'],9.55*inch,3.88*inch), Spacer(1,.1*inch),
+    story += [p("07 / The Control Group",s['kicker']),p("Where Are the Big Current Shows?",s['h2']),chart_card(charts['current_tv'],9.55*inch,3.88*inch), Spacer(1,.1*inch),
               text_card("Gilligan Universe has more SlashFilm stories in this window than <i>Stranger Things</i>: 204 to 163. Read that again. <i>Stranger Things</i> is a real cultural phenomenon. Gilligan is a 1960s sitcom about seven people stuck on an island. That does not make Gilligan bigger than <i>Stranger Things</i>, obviously. It means SlashFilm has published a truly mind-boggling amount of Gilligan material.",s['body']),
               p("The control group includes 2024 Emmy winners such as <i>Shogun</i>, <i>Hacks</i>, and <i>Baby Reindeer</i>, plus 2025 winners <i>The Pitt</i>, <i>The Studio</i>, and <i>Adolescence</i>. Popular-series controls include <i>Euphoria</i>, <i>Outer Banks</i>, <i>Bridgerton</i>, <i>The Last of Us</i>, <i>Stranger Things</i>, <i>The White Lotus</i>, <i>Severance</i>, and <i>The Bear</i>.",s['small']),PageBreak()]
     # Findings
@@ -351,13 +351,13 @@ def report(metrics, charts):
         ('LEFTPADDING',(0,0),(-1,-1),18), ('RIGHTPADDING',(0,0),(-1,-1),18),
         ('TOPPADDING',(0,0),(-1,-1),15), ('BOTTOMPADDING',(0,0),(-1,-1),15),
     ]))
-    story += [p("08 / Verdict",s['kicker']),p("So: did you notice a real pattern?",s['h2']),
+    story += [p("08 / Verdict",s['kicker']),p("So: Did You Notice a Real Pattern?",s['h2']),
               p("<b>Yes, with an asterisk.</b> Gilligan's Island is not one of SlashFilm's biggest franchises. But since 2024, the site has written about the show and its cast often enough that it belongs next to shows people are actually talking about right now.",s['body']),
               Spacer(1, .08*inch), verdict_card, Spacer(1, .16*inch),
               text_card("So yes: SlashFilm really does have a recent Gilligan thing. It is not bigger than every modern franchise. It is just bizarrely present for a 1960s sitcom and its cast, especially next to most of the current-TV group.",s['body']),
               Spacer(1, .08*inch), p("What I cannot tell you is why SlashFilm keeps publishing them or whether they perform well. This only answers the first question: the pattern is real.",s['small']),PageBreak()]
     # Appendix
-    story += [p("09 / Notes on method",s['kicker']),p("How to read the evidence",s['h2']),
+    story += [p("09 / Notes on Method",s['kicker']),p("How to Read the Evidence",s['h2']),
               p("Source: SlashFilm article pages indexed through the site's XML sitemaps and collected into year-specific CSVs. The catalog includes title, publication time, URL, primary subject, and Gilligan-related flag. The analysis includes 68,398 total articles from 2020 through Aug. 2, 2026.",s['body']),
               p("Selected-property counts use transparent title/URL aliases. This avoids treating platform names such as HBO, Netflix, or streaming as subjects. It also means the comparison is reproducible, but not a claim that every possible mention in body text has been counted.",s['body']),
               p("External context references: Television Academy, 2024 and 2025 Emmy Awards nominees and winners; Nielsen annual streaming rankings/ARTEY awards. These sources select the current-TV control group; the coverage counts themselves come from SlashFilm.",s['body']),
