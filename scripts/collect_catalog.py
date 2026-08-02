@@ -96,11 +96,12 @@ def main():
     parser.add_argument("--output", type=Path, default=OUT)
     parser.add_argument("--sitemap-start", type=int, default=1)
     parser.add_argument("--sitemap-end", type=int, default=999)
+    parser.add_argument("--sitemap-kind", choices=["post", "legacy"], default="post")
     parser.add_argument("--append", action="store_true")
     args = parser.parse_args()
     target_years = set(args.years)
-    sitemap_list = [url for url in sitemap_urls() if "post-sitemap" in url]
-    sitemap_list = [url for url in sitemap_list if args.sitemap_start <= int(re.search(r"post-sitemap(\d+)", url).group(1)) <= args.sitemap_end]
+    sitemap_list = [url for url in sitemap_urls() if f"{args.sitemap_kind}-sitemap" in url]
+    sitemap_list = [url for url in sitemap_list if args.sitemap_start <= int(re.search(rf"{args.sitemap_kind}-sitemap(\d+)", url).group(1)) <= args.sitemap_end]
     article_items = []
     with ThreadPoolExecutor(max_workers=8) as pool:
         for result in pool.map(lambda url: articles_from_sitemap(url, target_years), sitemap_list):
