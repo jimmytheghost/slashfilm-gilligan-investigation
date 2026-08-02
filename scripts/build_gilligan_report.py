@@ -341,12 +341,21 @@ def report(metrics, charts):
     story += [p("07 / The control group",s['kicker']),p("Where are the big current shows?",s['h2']),chart_card(charts['current_tv'],9.55*inch,3.88*inch), Spacer(1,.1*inch),
               text_card("Gilligan Universe is covered more often than every current show here except <i>Stranger Things</i>: <i>The Pitt</i>, <i>Severance</i>, <i>The Last of Us</i>, <i>Euphoria</i>, <i>Outer Banks</i>, and every award-season title. That is not a cultural-ranking claim. It is strong evidence that something unusual is happening in SlashFilm's editorial mix.",s['body']),
               p("The control group includes 2024 Emmy winners such as <i>Shogun</i>, <i>Hacks</i>, and <i>Baby Reindeer</i>, plus 2025 winners <i>The Pitt</i>, <i>The Studio</i>, and <i>Adolescence</i>. Popular-series controls include <i>Euphoria</i>, <i>Outer Banks</i>, <i>Bridgerton</i>, <i>The Last of Us</i>, <i>Stranger Things</i>, <i>The White Lotus</i>, <i>Severance</i>, and <i>The Bear</i>.",s['small']),PageBreak()]
-    # Findngs
+    # Findings
+    verdict_metric = Paragraph("<font size=31><b>110</b></font><br/><font size=10>GILLIGAN-RELATED<br/>STORIES IN 2024</font>", ParagraphStyle("verdictmetric", parent=s['small'], fontName=DISPLAY_FONT, textColor=HexColor(CORAL), leading=12))
+    verdict_copy = Paragraph("<b>One memorable subject can stick in your head. It cannot produce 110 stories in a single year.</b><br/><br/>That count is the cleanest reason to reject frequency illusion as the whole explanation.", ParagraphStyle("verdictcopy", parent=s['body'], fontSize=14, leading=18, spaceAfter=0))
+    verdict_card = Table([[verdict_metric, verdict_copy]], colWidths=[2.15*inch,7.3*inch])
+    verdict_card.setStyle(TableStyle([
+        ('BACKGROUND',(0,0),(-1,-1),HexColor(SAND)), ('BOX',(0,0),(-1,-1),.6,HexColor('#D7CBA5')),
+        ('LINEAFTER',(0,0),(0,0),.45,HexColor('#D7CBA5')), ('VALIGN',(0,0),(-1,-1),'MIDDLE'),
+        ('LEFTPADDING',(0,0),(-1,-1),18), ('RIGHTPADDING',(0,0),(-1,-1),18),
+        ('TOPPADDING',(0,0),(-1,-1),15), ('BOTTOMPADDING',(0,0),(-1,-1),15),
+    ]))
     story += [p("08 / Verdict",s['kicker']),p("So: did you notice a real pattern?",s['h2']),
               p("<b>Yes, with an asterisk.</b> Gilligan's Island is not one of SlashFilm's largest content ecosystems. But Gilligan-related coverage became a surprisingly persistent legacy-TV pattern after 2023, visible beside contemporary and award-winning television properties.",s['body']),
-              Spacer(1, .12*inch),
-              p("The frequency-illusion explanation is not enough on its own. A memorable topic can stand out, but it cannot create 110 Gilligan-related stories in a single year. The better interpretation is that a real coverage pattern exists, and its unusualness comes from the age and apparent cultural distance of the property rather than from it defeating every modern franchise.",s['callout']),
-              p("This packet does not attempt to explain why SlashFilm publishes these stories or infer traffic performance. It documents frequency, timing, and comparability - no more, no less.",s['body']),PageBreak()]
+              Spacer(1, .08*inch), verdict_card, Spacer(1, .16*inch),
+              text_card("The careful conclusion: SlashFilm has a real, recent Gilligan-related coverage pattern. The surprise is not that it outpublishes every modern franchise. It is that a 1960s sitcom and its cast receive recurring attention at a level that surpasses most of the current-TV group.",s['body']),
+              Spacer(1, .08*inch), p("This packet does not attempt to explain why SlashFilm publishes these stories or infer traffic performance. It documents frequency, timing, and comparability - no more, no less.",s['small']),PageBreak()]
     # Appendix
     story += [p("09 / Notes on method",s['kicker']),p("How to read the evidence",s['h2']),
               p("Source: SlashFilm article pages indexed through the site's XML sitemaps and collected into year-specific CSVs. The catalog includes title, publication time, URL, primary subject, and Gilligan-related flag. The analysis includes 68,398 total articles from 2020 through Aug. 2, 2026.",s['body']),
