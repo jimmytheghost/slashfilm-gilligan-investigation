@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 GILLIGAN = ("gilligan's island", "gilligans island", "gilligans-island", "alan hale", "alan-hale", "bob denver", "bob-denver", "natalie schafer", "natalie-schafer", "jim backus", "jim-backus", "tina louise", "tina-louise", "russell johnson", "russell-johnson", "dawn wells", "dawn-wells")
-SUBJECTS = [("Batman", ("batman", "bruce wayne")), ("Breaking Bad", ("breaking bad", "better call saul")), ("Star Wars", ("star wars", "star-wars", "mandalorian", "ahsoka")), ("Marvel", ("marvel", "mcu", "avengers", "spider-man", "spiderman", "x-men", "deadpool")), ("DC", ("dc comics", "superman", "wonder woman", "joker")), ("Star Trek", ("star trek", "star-trek")), ("James Bond", ("james bond", "007", "james-bond")), ("Horror", ("horror", "slasher", "scariest", "haunted")), ("Science Fiction", ("sci-fi", "science fiction", "sci fi")), ("Western", ("western", "westerns")), ("Animation", ("animated", "animation", "pixar", "dreamworks")), ("Streaming", ("netflix", "hbo", "apple tv", "prime video", "disney+", "hulu"))]
+SUBJECTS = [("Batman", ("batman", "bruce wayne")), ("Breaking Bad", ("breaking bad", "better call saul")), ("Star Wars", ("star wars", "star-wars", "mandalorian", "ahsoka")), ("Marvel", ("marvel", "mcu", "avengers", "spider-man", "spiderman", "x-men", "deadpool")), ("DC", ("dc comics", "superman", "wonder woman", "joker")), ("Star Trek", ("star trek", "star-trek")), ("James Bond", ("james bond", "007", "james-bond")), ("Horror", ("horror", "slasher", "scariest", "haunted")), ("Science Fiction", ("sci-fi", "science fiction", "sci fi")), ("Western", ("western", "westerns")), ("Animation", ("animated", "animation", "pixar", "dreamworks"))]
 
 
 def classify(row):
