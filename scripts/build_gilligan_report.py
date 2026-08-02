@@ -338,7 +338,7 @@ def report(metrics, charts):
     story += [p("06 / Who is actually being covered?",s['kicker']),p("Gilligan is a show, but the cast is the engine",s['h2']),chart_card(charts['cast'],9.55*inch,3.75*inch), Spacer(1,.12*inch),
               text_card("The island is the biggest bucket. But the cast is what turns it into a deep well of stories: old TV roles, behind-the-scenes trivia, forgotten movies, other sitcoms. The Gilligan Universe is doing a lot of work here.",s['body']),PageBreak()]
     # Current TV
-    story += [p("07 / The control group",s['kicker']),p("Where are the big current shows?",s['h2']),chart_card(charts['current_tv'],9.55*inch,3.88*inch), Spacer(1,.1*inch),
+    story += [p("07 / The control group",s['kicker']),p("Where Are the Big Current Shows?",s['h2']),chart_card(charts['current_tv'],9.55*inch,3.88*inch), Spacer(1,.1*inch),
               text_card("Gilligan Universe has more SlashFilm stories in this window than <i>Stranger Things</i>: 204 to 163. Read that again. <i>Stranger Things</i> is a real cultural phenomenon. Gilligan is a 1960s sitcom about seven people stuck on an island. That does not make Gilligan bigger than <i>Stranger Things</i>, obviously. It means SlashFilm has published a truly mind-boggling amount of Gilligan material.",s['body']),
               p("The control group includes 2024 Emmy winners such as <i>Shogun</i>, <i>Hacks</i>, and <i>Baby Reindeer</i>, plus 2025 winners <i>The Pitt</i>, <i>The Studio</i>, and <i>Adolescence</i>. Popular-series controls include <i>Euphoria</i>, <i>Outer Banks</i>, <i>Bridgerton</i>, <i>The Last of Us</i>, <i>Stranger Things</i>, <i>The White Lotus</i>, <i>Severance</i>, and <i>The Bear</i>.",s['small']),PageBreak()]
     # Findings
