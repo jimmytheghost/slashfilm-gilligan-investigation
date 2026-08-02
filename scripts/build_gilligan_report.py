@@ -297,7 +297,17 @@ def report(metrics, charts):
     # Cover
     cover_title=Paragraph("Is SlashFilm really obsessed with<br/>Gilligan's Island?", ParagraphStyle("cover", parent=s['h1'], textColor=HexColor(CREAM), fontSize=43, leading=46, spaceAfter=18))
     cover_body=Paragraph("A few years ago, I started noticing something weird:<br/>SlashFilm kept publishing stories about Gilligan's Island.<br/>The show. The cast. The whole Gilligan Universe.<br/>So I had an AI catalogue six years of headlines<br/>to find out whether I was imagining it.", ParagraphStyle("coverbody", parent=s['body'], textColor=HexColor('#D5E5E0'), fontSize=12.2, leading=17, spaceAfter=16))
-    cover_stat=Paragraph(f"<font name={LABEL_FONT} size=12>FROM 2024 THROUGH<br/>AUG. 2, 2026, THERE WERE</font><br/><font name={DISPLAY_FONT} size=44>{expanded}</font><br/><font name={LABEL_FONT} size=16>GILLIGAN-RELATED STORIES</font>", ParagraphStyle("coverstat", parent=s['h2'], textColor=HexColor(NAVY), backColor=HexColor(SAND), leading=28, borderPadding=18))
+    cover_date = Paragraph("FROM 2024 THROUGH<br/>AUG. 2, 2026, THERE WERE", ParagraphStyle("coverdate", parent=s['kicker'], fontName=LABEL_FONT, fontSize=12, leading=16, textColor=HexColor(NAVY), spaceAfter=0))
+    cover_number = Paragraph(str(expanded), ParagraphStyle("covernumber", parent=s['h1'], fontName=DISPLAY_FONT, fontSize=54, leading=54, textColor=HexColor(NAVY), spaceAfter=0))
+    cover_label = Paragraph("GILLIGAN-RELATED STORIES", ParagraphStyle("coverlabelstat", parent=s['kicker'], fontName=LABEL_FONT, fontSize=16, leading=19, textColor=HexColor(NAVY), spaceAfter=0))
+    cover_stat = Table([[cover_date], [cover_number], [cover_label]], colWidths=[3.15*inch])
+    cover_stat.setStyle(TableStyle([
+        ('BACKGROUND',(0,0),(-1,-1),HexColor(SAND)),
+        ('LEFTPADDING',(0,0),(-1,-1),20), ('RIGHTPADDING',(0,0),(-1,-1),14),
+        ('TOPPADDING',(0,0),(0,0),18), ('BOTTOMPADDING',(0,0),(0,0),7),
+        ('TOPPADDING',(0,1),(0,1),0), ('BOTTOMPADDING',(0,1),(0,1),6),
+        ('TOPPADDING',(0,2),(0,2),0), ('BOTTOMPADDING',(0,2),(0,2),18),
+    ]))
     cover_meta=Paragraph(f"{shares:.2f}% of all {focal_total:,} stories from 2024 through Aug. 2, 2026.\n68,398 headlines later: I was not imagining it.", ParagraphStyle("covermeta", parent=s['small'], textColor=HexColor('#D5E5E0'), fontSize=10.2, leading=14))
     cover_left = [p("A DATA INVESTIGATION", ParagraphStyle("coverkick", parent=s['kicker'], textColor=HexColor(CORAL))), cover_title, cover_body, cover_meta]
     cover_right = [Spacer(1, 1.15*inch), cover_stat, Spacer(1, .18*inch), p("OBSERVED PATTERN<br/>2024-2026", ParagraphStyle("coverlabel", parent=s['kicker'], textColor=HexColor(SEA), alignment=1))]
