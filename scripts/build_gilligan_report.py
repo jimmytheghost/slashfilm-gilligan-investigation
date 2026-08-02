@@ -349,7 +349,7 @@ def report(metrics, charts):
               text_card("The island is the biggest bucket. But the cast is what turns it into a deep well of stories: old TV roles, behind-the-scenes trivia, forgotten movies, other sitcoms. The Gilligan Universe is doing a lot of work here.",s['body']),PageBreak()]
     # Current TV
     story += [p("07 / The Control Group",s['kicker']),p("Where Are the Big Current Shows?",s['h2']),chart_card(charts['current_tv'],9.55*inch,3.88*inch), Spacer(1,.1*inch),
-              text_card("The data says Gilligan Universe beat <i>Stranger Things</i>, 204 SlashFilm stories to 163. <i>Stranger Things</i> is a genuine cultural phenomenon. The 41-story gap is the report's cleanest “wait, what?” finding.",s['body']),
+              text_card("How does Gilligan's Universe compare to current TV shows? I'm glad you asked. Just look at how many stories were written about <i>The Pitt</i>, <i>Severance</i>, <i>The White Lotus</i>, or even <i>Stranger Things</i>! Yes! <b>THAT</b> <i>Stranger Things</i>! It's truly phenomenal.",s['body']),
               p("The control group includes 2024 Emmy winners such as <i>Shogun</i>, <i>Hacks</i>, and <i>Baby Reindeer</i>, plus 2025 winners <i>The Pitt</i>, <i>The Studio</i>, and <i>Adolescence</i>. Popular-series controls include <i>Euphoria</i>, <i>Outer Banks</i>, <i>Bridgerton</i>, <i>The Last of Us</i>, <i>Stranger Things</i>, <i>The White Lotus</i>, <i>Severance</i>, and <i>The Bear</i>.",s['small']),PageBreak()]
     # Findings
     verdict_metric = Paragraph("<font size=31><b>110</b></font><br/><font size=10>GILLIGAN-RELATED<br/>STORIES IN 2024</font>", ParagraphStyle("verdictmetric", parent=s['small'], fontName=DISPLAY_FONT, textColor=HexColor(CORAL), leading=12))
