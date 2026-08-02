@@ -8,9 +8,11 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 from reportlab.lib.colors import HexColor, white
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.pagesizes import landscape, letter
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (Image, KeepTogether, PageBreak, Paragraph,
                                 SimpleDocTemplate, Spacer, Table, TableStyle)
 
@@ -30,6 +32,10 @@ CREAM = "#FFFDF5"
 INK = "#14252B"
 GOLD = "#E3AD40"
 MUTED = "#60747A"
+
+DISPLAY_FONT = "BigCaslon"
+TEXT_FONT = "SFNS"
+LABEL_FONT = "DINCondensed"
 
 GILLIGAN_CAST = ["Alan Hale Jr.", "Bob Denver", "Russell Johnson", "Tina Louise", "Jim Backus", "Natalie Schafer", "Dawn Wells"]
 
@@ -119,6 +125,13 @@ def save_chart(fig, name):
     return path
 
 
+def register_fonts():
+    pdfmetrics.registerFont(TTFont(DISPLAY_FONT, "/System/Library/Fonts/Supplemental/BigCaslon.ttf"))
+    pdfmetrics.registerFont(TTFont(TEXT_FONT, "/System/Library/Fonts/SFNS.ttf"))
+    pdfmetrics.registerFont(TTFont(LABEL_FONT, "/System/Library/Fonts/Supplemental/DIN Condensed Bold.ttf"))
+    plt.rcParams.update({"font.family": "STIXGeneral", "axes.titleweight": "normal"})
+
+
 def chart_annual(metrics):
     years = YEARS
     values = [metrics["annual"][y]["expanded"] for y in years]
@@ -191,33 +204,24 @@ def chart_current_tv(metrics):
 def styles():
     base=getSampleStyleSheet()
     return {
-        "kicker": ParagraphStyle("kicker", parent=base["Normal"], fontName="Helvetica-Bold", fontSize=8.5, leading=10, textColor=HexColor(CORAL), spaceAfter=7, uppercase=True),
-        "h1": ParagraphStyle("h1", parent=base["Normal"], fontName="Helvetica-Bold", fontSize=28, leading=31, textColor=HexColor(NAVY), spaceAfter=12),
-        "h2": ParagraphStyle("h2", parent=base["Normal"], fontName="Helvetica-Bold", fontSize=18, leading=22, textColor=HexColor(NAVY), spaceBefore=3, spaceAfter=8),
-        "body": ParagraphStyle("body", parent=base["Normal"], fontName="Helvetica", fontSize=10.2, leading=14.2, textColor=HexColor(INK), spaceAfter=8),
-        "small": ParagraphStyle("small", parent=base["Normal"], fontName="Helvetica", fontSize=8.1, leading=10.5, textColor=HexColor(MUTED), spaceAfter=5),
-        "callout": ParagraphStyle("callout", parent=base["Normal"], fontName="Helvetica-Bold", fontSize=15, leading=19, textColor=HexColor(NAVY), backColor=HexColor(SAND), borderPadding=12, spaceAfter=12),
+        "kicker": ParagraphStyle("kicker", parent=base["Normal"], fontName=LABEL_FONT, fontSize=10, leading=11, textColor=HexColor(CORAL), spaceAfter=9, uppercase=True, tracking=1.8),
+        "h1": ParagraphStyle("h1", parent=base["Normal"], fontName=DISPLAY_FONT, fontSize=38, leading=41, textColor=HexColor(NAVY), spaceAfter=13),
+        "h2": ParagraphStyle("h2", parent=base["Normal"], fontName=DISPLAY_FONT, fontSize=26, leading=29, textColor=HexColor(NAVY), spaceBefore=2, spaceAfter=10),
+        "body": ParagraphStyle("body", parent=base["Normal"], fontName=TEXT_FONT, fontSize=10.8, leading=15, textColor=HexColor(INK), spaceAfter=9),
+        "small": ParagraphStyle("small", parent=base["Normal"], fontName=TEXT_FONT, fontSize=8.4, leading=11, textColor=HexColor(MUTED), spaceAfter=5),
+        "callout": ParagraphStyle("callout", parent=base["Normal"], fontName=DISPLAY_FONT, fontSize=19, leading=22, textColor=HexColor(NAVY), backColor=HexColor(SAND), borderPadding=16, spaceAfter=13),
     }
 
 
 def header_footer(canvas, doc):
     canvas.saveState()
     if doc.page == 1:
-        # Original, simple island emblem: sun, palm, island, and water.
-        canvas.setFillColor(HexColor(CORAL)); canvas.circle(6.98*inch, 8.88*inch, .45*inch, stroke=0, fill=1)
-        canvas.setFillColor(HexColor(SAND)); canvas.ellipse(6.15*inch, 8.02*inch, 7.85*inch, 8.34*inch, stroke=0, fill=1)
-        canvas.setStrokeColor(HexColor(NAVY)); canvas.setLineWidth(3)
-        canvas.line(6.95*inch, 8.13*inch, 7.12*inch, 8.70*inch)
-        canvas.setLineWidth(2)
-        for dx, dy in [(-.23,.10), (-.15,.22), (.16,.19), (.24,.06)]:
-            canvas.line(7.11*inch, 8.67*inch, (7.11+dx)*inch, (8.67+dy)*inch)
-        canvas.setStrokeColor(HexColor(SEA)); canvas.setLineWidth(2)
-        for y in [7.78, 7.65, 7.52]:
-            canvas.arc(6.12*inch, y*inch, 7.88*inch, (y+.20)*inch, 200, 135)
+        canvas.setFillColor(HexColor(NAVY)); canvas.rect(0, 0, 11*inch, 8.5*inch, stroke=0, fill=1)
+        canvas.setFillColor(HexColor(CORAL)); canvas.rect(0, 8.12*inch, 11*inch, .38*inch, stroke=0, fill=1)
     if doc.page > 1:
-        canvas.setStrokeColor(HexColor(SEA)); canvas.setLineWidth(1.2); canvas.line(.58*inch, .48*inch, 7.92*inch, .48*inch)
-        canvas.setFont("Helvetica-Bold", 7.5); canvas.setFillColor(HexColor(NAVY)); canvas.drawString(.62*inch, .30*inch, "SLASHFILM COVERAGE PATTERN INVESTIGATION")
-        canvas.drawRightString(7.88*inch, .30*inch, f"PAGE {doc.page}")
+        canvas.setStrokeColor(HexColor(SEA)); canvas.setLineWidth(1.2); canvas.line(.62*inch, .42*inch, 10.38*inch, .42*inch)
+        canvas.setFont(LABEL_FONT, 8.5); canvas.setFillColor(HexColor(NAVY)); canvas.drawString(.64*inch, .22*inch, "SLASHFILM COVERAGE PATTERN INVESTIGATION")
+        canvas.drawRightString(10.36*inch, .22*inch, f"PAGE {doc.page}")
     canvas.restoreState()
 
 
@@ -227,7 +231,7 @@ def p(text, style): return Paragraph(text, style)
 def report(metrics, charts):
     OUT.parent.mkdir(parents=True, exist_ok=True); TABLES.parent.mkdir(parents=True, exist_ok=True)
     TABLES.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
-    doc=SimpleDocTemplate(str(OUT),pagesize=letter,rightMargin=.63*inch,leftMargin=.63*inch,topMargin=.62*inch,bottomMargin=.65*inch)
+    doc=SimpleDocTemplate(str(OUT),pagesize=landscape(letter),rightMargin=.64*inch,leftMargin=.64*inch,topMargin=.58*inch,bottomMargin=.58*inch)
     s=styles(); story=[]
     expanded=sum(metrics['annual'][y]['expanded'] for y in FOCAL_YEARS)
     direct=sum(metrics['direct'][y] for y in FOCAL_YEARS)
@@ -236,10 +240,15 @@ def report(metrics, charts):
     top_current=sorted(metrics['current_tv'].items(),key=lambda x:x[1],reverse=True)[:5]
     
     # Cover
-    story += [Spacer(1,.5*inch), p("A DATA INVESTIGATION",s['kicker']), p("Is SlashFilm really obsessed with Gilligan's Island?",s['h1']),
-              p("A curiosity-driven audit of 68,000+ SlashFilm stories, built to test a simple question: did a 1960s sitcom genuinely become a recurring modern coverage subject, or did it merely become memorable enough to create a frequency illusion?",s['body']),
-              Spacer(1,.15*inch), p("THE SHORT VERSION",s['kicker']), p(f"<b>{expanded} Gilligan-related stories</b> appeared from 2024 through Aug. 2, 2026 - {shares:.2f}% of all {focal_total:,} stories in the focal period. The surge is real, recent, and largely driven by 2024-2026 coverage.",s['callout']),
-              Spacer(1,.2*inch), p("Prepared from SlashFilm article metadata and headline-level subject classification. August 2026 data is year-to-date.",s['small']), PageBreak()]
+    cover_title=Paragraph("Is SlashFilm really obsessed with<br/>Gilligan's Island?", ParagraphStyle("cover", parent=s['h1'], textColor=HexColor(CREAM), fontSize=43, leading=46, spaceAfter=18))
+    cover_body=Paragraph("A curiosity-driven audit of 68,000+ SlashFilm stories, built to test a simple question: did a 1960s sitcom genuinely become a recurring modern coverage subject, or did it merely become memorable enough to create a frequency illusion?", ParagraphStyle("coverbody", parent=s['body'], textColor=HexColor('#D5E5E0'), fontSize=12.2, leading=17, spaceAfter=16))
+    cover_stat=Paragraph(f"<b>{expanded}</b><br/>Gilligan-related stories<br/>from 2024 through Aug. 2, 2026", ParagraphStyle("coverstat", parent=s['h2'], textColor=HexColor(NAVY), backColor=HexColor(SAND), fontSize=23, leading=27, borderPadding=18))
+    cover_meta=Paragraph(f"{shares:.2f}% of all {focal_total:,} focal-period stories.\nThe spike is real, recent, and measurable.", ParagraphStyle("covermeta", parent=s['small'], textColor=HexColor('#D5E5E0'), fontSize=10.2, leading=14))
+    cover_left = [p("A DATA INVESTIGATION", ParagraphStyle("coverkick", parent=s['kicker'], textColor=HexColor(CORAL))), cover_title, cover_body, cover_meta]
+    cover_right = [Spacer(1, 1.15*inch), cover_stat, Spacer(1, .18*inch), p("OBSERVED PATTERN<br/>2024-2026", ParagraphStyle("coverlabel", parent=s['kicker'], textColor=HexColor(SEA), alignment=1))]
+    cover_table = Table([[cover_left, cover_right]], colWidths=[6.55*inch,3.15*inch])
+    cover_table.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP'),('LEFTPADDING',(0,0),(-1,-1),0),('RIGHTPADDING',(0,0),(-1,-1),0),('TOPPADDING',(0,0),(-1,-1),.65*inch),('BOTTOMPADDING',(0,0),(-1,-1),0)]))
+    story += [cover_table, Spacer(1,.1*inch), p("Prepared from SlashFilm article metadata and headline-level subject classification. August 2026 data is year-to-date.", ParagraphStyle("coverfoot",parent=s['small'],textColor=HexColor('#AFC9C3'))), PageBreak()]
     # Framing and method
     story += [p("01 / The question",s['kicker']),p("Pattern or frequency illusion?",s['h2']),
               p("The premise is not that SlashFilm should cover one show instead of another. It is a narrower question: does Gilligan's Island appear often enough in the site's output to qualify as an unusual editorial pattern?",s['body']),
@@ -247,26 +256,26 @@ def report(metrics, charts):
               p("The report treats 2024-2026 as the comparison window because those years have the most complete headline-based subject normalization. 2020-2023 appears only as historical context for the Gilligan trend.",s['body']),
               p("Headline classification is intentionally transparent: the title and URL determine the primary subject; ambiguous rows use an auditable headline fallback. Exact aliases, not broad subject buckets, drive the selected-franchise comparisons.",s['small']), PageBreak()]
     # Timeline
-    story += [p("02 / Exhibit A",s['kicker']),p("The Gilligan spike is recent",s['h2']),Image(str(charts['annual']),width=7.1*inch,height=2.9*inch),
+    story += [p("02 / Exhibit A",s['kicker']),p("The Gilligan spike is recent",s['h2']),Image(str(charts['annual']),width=9.55*inch,height=3.35*inch),
               p("The six-year time series does not support a steady, background level of Gilligan coverage. It instead shows a sharp emergence in 2024, followed by sustained coverage in 2025 and 2026 year-to-date.",s['body']),
               p("The raw annual counts are: 0 (2020), 2 (2021), 0 (2022), 1 (2023), 110 (2024), 50 (2025), and 44 through Aug. 2, 2026.",s['small']),PageBreak()]
     # Scoreboard
-    story += [p("03 / The scoreboard",s['kicker']),p("Gilligan is not Marvel. That is not the point.",s['h2']),Image(str(charts['scoreboard']),width=7.15*inch,height=4.25*inch),
+    story += [p("03 / The scoreboard",s['kicker']),p("Gilligan is not Marvel. That is not the point.",s['h2']),Image(str(charts['scoreboard']),width=9.55*inch,height=4.55*inch),
               p("Broad ecosystems such as Marvel, Star Trek, and Star Wars naturally dominate SlashFilm's output. The useful comparison is with individual shows and franchises. In that company, the expanded Gilligan universe is not a trivial tail event.",s['body']),PageBreak()]
     # direct expanded
     table_data=[["Metric","2024","2025","2026 YTD","Focal total"], ["Direct Gilligan's Island",*[metrics['direct'][y] for y in FOCAL_YEARS],direct], ["Expanded Gilligan universe",*[metrics['annual'][y]['expanded'] for y in FOCAL_YEARS],expanded]]
-    t=Table(table_data,colWidths=[2.3*inch,1.1*inch,1.1*inch,1.1*inch,1.15*inch])
+    t=Table(table_data,colWidths=[3.4*inch,1.55*inch,1.55*inch,1.55*inch,1.55*inch])
     t.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),HexColor(NAVY)),('TEXTCOLOR',(0,0),(-1,0),white),('FONTNAME',(0,0),(-1,0),'Helvetica-Bold'),('FONTNAME',(0,1),(0,-1),'Helvetica-Bold'),('BACKGROUND',(0,2),(-1,2),HexColor(SAND)),('GRID',(0,0),(-1,-1),.35,HexColor('#C4D5D0')),('ALIGN',(1,0),(-1,-1),'CENTER'),('VALIGN',(0,0),(-1,-1),'MIDDLE'),('TOPPADDING',(0,0),(-1,-1),8),('BOTTOMPADDING',(0,0),(-1,-1),8)]))
     story += [p("04 / Two ways to count it",s['kicker']),p("The island alone, and the island plus its orbit",s['h2']),t,Spacer(1,.18*inch),
               p("The difference between these lines is the story. In 2026, Alan Hale Jr. becomes the largest single Gilligan-related subject, even when the article is about The Love Boat, a Western, or a forgotten movie role. That is why the expanded measure belongs in the report - but it is displayed separately from direct show coverage.",s['body']),PageBreak()]
     # cadence
-    story += [p("05 / Cadence",s['kicker']),p("This is recurring coverage, not one nostalgia package",s['h2']),Image(str(charts['monthly']),width=7.15*inch,height=2.85*inch),
+    story += [p("05 / Cadence",s['kicker']),p("This is recurring coverage, not one nostalgia package",s['h2']),Image(str(charts['monthly']),width=9.55*inch,height=3.45*inch),
               p("The monthly series shows repeated coverage across many months rather than a single anniversary or reboot event. The 2024 surge is particularly concentrated from July through December; 2026 reaches 15 stories in June alone.",s['body']),PageBreak()]
     # cast
-    story += [p("06 / Who is actually being covered?",s['kicker']),p("Gilligan is a show, but the cast is the engine",s['h2']),Image(str(charts['cast']),width=7.15*inch,height=3.05*inch),
+    story += [p("06 / Who is actually being covered?",s['kicker']),p("Gilligan is a show, but the cast is the engine",s['h2']),Image(str(charts['cast']),width=9.55*inch,height=3.75*inch),
               p("The direct-show label is the biggest single bucket, but cast-member articles turn the property into a much wider content reservoir. The report keeps those two forms of coverage visible rather than treating them as interchangeable.",s['body']),PageBreak()]
     # Current TV
-    story += [p("07 / The control group",s['kicker']),p("Where are the big current shows?",s['h2']),Image(str(charts['current_tv']),width=7.15*inch,height=4.25*inch),
+    story += [p("07 / The control group",s['kicker']),p("Where are the big current shows?",s['h2']),Image(str(charts['current_tv']),width=9.55*inch,height=4.55*inch),
               p("This chart compares Gilligan with a deliberately mixed group of award-recognized and culturally visible recent TV. It is not a measure of popularity; it measures SlashFilm article frequency. That distinction matters: coverage volume reflects editorial and search strategy, not audience quality or cultural worth.",s['body']),
               p("The control group includes 2024 Emmy winners such as <i>Shogun</i>, <i>Hacks</i>, and <i>Baby Reindeer</i>, plus 2025 winners <i>The Pitt</i>, <i>The Studio</i>, and <i>Adolescence</i>. Popular-series controls include <i>Euphoria</i>, <i>Outer Banks</i>, <i>Bridgerton</i>, <i>The Last of Us</i>, <i>Stranger Things</i>, <i>The White Lotus</i>, <i>Severance</i>, and <i>The Bear</i>.",s['small']),PageBreak()]
     # Findngs
@@ -285,6 +294,7 @@ def report(metrics, charts):
 
 
 def main():
+    register_fonts()
     metrics=compute()
     charts={"annual":chart_annual(metrics),"scoreboard":chart_scoreboard(metrics),"monthly":chart_monthly(metrics),"cast":chart_cast(metrics),"current_tv":chart_current_tv(metrics)}
     report(metrics,charts)
