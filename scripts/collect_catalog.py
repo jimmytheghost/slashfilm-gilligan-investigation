@@ -49,6 +49,9 @@ def articles_from_sitemap(url, target_years):
         lastmod = xml_text(node, "lastmod")
         if not article_url or not lastmod:
             continue
+        match = re.search(r"/([0-9]+)/", article_url)
+        if match and not (300000 <= int(match.group(1)) <= 1750000):
+            continue
         published = datetime.fromisoformat(lastmod.replace("Z", "+00:00"))
         if published.year in target_years:
             rows.append((article_url, published.isoformat()))
