@@ -7,6 +7,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+from matplotlib import font_manager
 from reportlab.lib.colors import HexColor, white
 from reportlab.lib.pagesizes import landscape, letter
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
@@ -35,8 +36,8 @@ GOLD = "#E3AD40"
 MUTED = "#60747A"
 
 DISPLAY_FONT = "RobotoBlack"
-TEXT_FONT = "BigCaslon"
-LABEL_FONT = "DINCondensed"
+TEXT_FONT = "RobotoSerif"
+LABEL_FONT = "RobotoMedium"
 
 GILLIGAN_CAST = ["Alan Hale Jr.", "Bob Denver", "Russell Johnson", "Tina Louise", "Jim Backus", "Natalie Schafer", "Dawn Wells"]
 
@@ -128,9 +129,26 @@ def save_chart(fig, name):
 
 def register_fonts():
     pdfmetrics.registerFont(TTFont(DISPLAY_FONT, str(ROOT / "assets" / "fonts" / "Roboto-Black.ttf")))
-    pdfmetrics.registerFont(TTFont(TEXT_FONT, "/System/Library/Fonts/Supplemental/BigCaslon.ttf"))
-    pdfmetrics.registerFont(TTFont(LABEL_FONT, "/System/Library/Fonts/Supplemental/DIN Condensed Bold.ttf"))
-    plt.rcParams.update({"font.family": "STIXGeneral", "axes.titleweight": "normal"})
+    pdfmetrics.registerFont(TTFont(TEXT_FONT, str(ROOT / "assets" / "fonts" / "RobotoSerif-Regular.ttf")))
+    pdfmetrics.registerFont(TTFont(LABEL_FONT, str(ROOT / "assets" / "fonts" / "Roboto-Medium.ttf")))
+    for name in ("Roboto-Regular.ttf", "Roboto-Medium.ttf", "Roboto-Black.ttf"):
+        font_manager.fontManager.addfont(str(ROOT / "assets" / "fonts" / name))
+    plt.rcParams.update({"font.family": "Roboto", "axes.titleweight": "normal"})
+
+
+def roboto(weight="regular"):
+    names = {"regular": "Roboto-Regular.ttf", "medium": "Roboto-Medium.ttf", "black": "Roboto-Black.ttf"}
+    return font_manager.FontProperties(fname=str(ROOT / "assets" / "fonts" / names[weight]))
+
+
+def finish_chart(ax, title, ylabel=None):
+    """Give every chart the same deliberate typographic hierarchy."""
+    if ylabel:
+        ax.set_ylabel(ylabel, color=INK, fontproperties=roboto("medium"), labelpad=10)
+    ax.set_title(title, loc="left", color=INK, fontproperties=roboto("black"), fontsize=14, pad=12)
+    for label in list(ax.get_xticklabels()) + list(ax.get_yticklabels()):
+        label.set_fontproperties(roboto("regular"))
+        label.set_color(INK)
 
 
 def chart_annual(metrics):
@@ -140,10 +158,10 @@ def chart_annual(metrics):
     ax.set_facecolor(CREAM)
     bars = ax.bar(years, values, color=[MUTED if y < 2024 else CORAL for y in years], width=.62)
     for bar, value in zip(bars, values):
-        ax.text(bar.get_x()+bar.get_width()/2, value+max(values)*.025, str(value), ha="center", color=INK, weight="bold")
-    ax.set_ylim(0, max(values)*1.22); ax.set_ylabel("Gilligan-related stories", color=INK)
+        ax.text(bar.get_x()+bar.get_width()/2, value+max(values)*.025, str(value), ha="center", color=INK, fontproperties=roboto("black"))
+    ax.set_ylim(0, max(values)*1.22)
     ax.spines[["top", "right", "left"]].set_visible(False); ax.grid(axis="y", alpha=.16)
-    ax.tick_params(colors=INK); ax.set_title("The pattern is recent, not six years old", loc="left", color=INK, weight="bold", fontsize=14)
+    ax.tick_params(colors=INK); finish_chart(ax, "The pattern is recent, not six years old", "Gilligan-related stories")
     return save_chart(fig, "annual_gilligan")
 
 
@@ -156,9 +174,9 @@ def chart_scoreboard(metrics):
     colors = [CORAL if n == "Gilligan universe" else SEA for n in names]
     ax.barh(range(len(names)), values, color=colors)
     ax.set_yticks(range(len(names)), names, color=INK); ax.invert_yaxis()
-    for i,v in enumerate(values): ax.text(v+max(values)*.01, i, str(v), va="center", color=INK, weight="bold", fontsize=9)
+    for i,v in enumerate(values): ax.text(v+max(values)*.01, i, str(v), va="center", color=INK, fontproperties=roboto("black"), fontsize=9)
     ax.spines[["top","right","bottom","left"]].set_visible(False); ax.tick_params(left=False, bottom=False, labelbottom=False)
-    ax.set_title("SlashFilm property mentions, 2024-2026", loc="left", color=INK, weight="bold", fontsize=14)
+    finish_chart(ax, "SlashFilm property mentions, 2024-2026")
     return save_chart(fig, "franchise_scoreboard")
 
 
@@ -171,8 +189,7 @@ def chart_monthly(metrics):
     tick_indices = sorted({round(i * (len(months) - 1) / 3) for i in range(4)})
     ax.set_xticks(tick_indices, [months[i] for i in tick_indices], rotation=0)
     ax.set_ylim(0, max(counts)*1.2); ax.grid(axis="y", alpha=.16); ax.spines[["top","right","left"]].set_visible(False)
-    ax.tick_params(colors=INK); ax.set_ylabel("Stories", color=INK)
-    ax.set_title("Gilligan coverage arrives in clusters, not as a one-day fluke", loc="left", color=INK, weight="bold", fontsize=14)
+    ax.tick_params(colors=INK); finish_chart(ax, "Gilligan coverage arrives in clusters, not as a one-day fluke", "Stories")
     return save_chart(fig, "monthly_gilligan")
 
 
@@ -184,10 +201,10 @@ def chart_cast(metrics):
     fig, ax = plt.subplots(figsize=(10, 3.93), facecolor=CREAM); ax.set_facecolor(CREAM)
     colors = [CORAL] + [GOLD, SEA, "#89A7B0", "#BA8C78", "#8DB36F", "#9873A5", "#6B9EA4"]
     bars=ax.bar(names, values, color=colors[:len(names)])
-    for b,v in zip(bars,values): ax.text(b.get_x()+b.get_width()/2,v+2,str(v),ha="center",weight="bold",color=INK)
+    for b,v in zip(bars,values): ax.text(b.get_x()+b.get_width()/2,v+2,str(v),ha="center",color=INK,fontproperties=roboto("black"))
     ax.set_ylim(0,max(values)*1.25); ax.spines[["top","right","left"]].set_visible(False); ax.grid(axis="y",alpha=.16)
-    ax.tick_params(colors=INK); ax.set_ylabel("Stories", color=INK); ax.tick_params(axis="x", rotation=20)
-    ax.set_title("It is not only the island: SlashFilm repeatedly returns to the cast", loc="left", color=INK, weight="bold", fontsize=14)
+    ax.tick_params(colors=INK); ax.tick_params(axis="x", rotation=20)
+    finish_chart(ax, "It is not only the island: SlashFilm repeatedly returns to the cast", "Stories")
     return save_chart(fig, "cast_breakdown")
 
 
@@ -197,9 +214,9 @@ def chart_current_tv(metrics):
     fig,ax=plt.subplots(figsize=(10,4.77),facecolor=CREAM); ax.set_facecolor(CREAM)
     colors=[CORAL if n=="Gilligan universe" else "#6FC7BE" for n in names]
     ax.barh(range(len(names)),values,color=colors); ax.set_yticks(range(len(names)),names,color=INK); ax.invert_yaxis()
-    for i,v in enumerate(values): ax.text(v+max(values)*.01,i,str(v),va="center",color=INK,weight="bold",fontsize=9)
+    for i,v in enumerate(values): ax.text(v+max(values)*.01,i,str(v),va="center",color=INK,fontproperties=roboto("black"),fontsize=9)
     ax.spines[["top","right","bottom","left"]].set_visible(False);ax.tick_params(left=False,bottom=False,labelbottom=False)
-    ax.set_title("Gilligan versus recent prestige and popular TV",loc="left",color=INK,weight="bold",fontsize=14)
+    finish_chart(ax, "Gilligan versus recent prestige and popular TV")
     return save_chart(fig,"current_tv")
 
 
@@ -208,7 +225,7 @@ def styles():
     return {
         "kicker": ParagraphStyle("kicker", parent=base["Normal"], fontName=LABEL_FONT, fontSize=10, leading=11, textColor=HexColor(CORAL), spaceAfter=9, uppercase=True, tracking=1.8),
         "h1": ParagraphStyle("h1", parent=base["Normal"], fontName=DISPLAY_FONT, fontSize=34, leading=37, textColor=HexColor(NAVY), spaceAfter=15),
-        "h2": ParagraphStyle("h2", parent=base["Normal"], fontName=DISPLAY_FONT, fontSize=25, leading=28, textColor=HexColor(NAVY), spaceBefore=2, spaceAfter=12),
+        "h2": ParagraphStyle("h2", parent=base["Normal"], fontName=DISPLAY_FONT, fontSize=23, leading=26, textColor=HexColor(NAVY), spaceBefore=2, spaceAfter=12),
         "body": ParagraphStyle("body", parent=base["Normal"], fontName=TEXT_FONT, fontSize=14, leading=18.5, textColor=HexColor(INK), spaceAfter=11),
         "small": ParagraphStyle("small", parent=base["Normal"], fontName=TEXT_FONT, fontSize=11.5, leading=14.5, textColor=HexColor(MUTED), spaceAfter=7),
         "callout": ParagraphStyle("callout", parent=base["Normal"], fontName=DISPLAY_FONT, fontSize=18, leading=22, textColor=HexColor(NAVY), backColor=HexColor(SAND), borderPadding=18, spaceAfter=14),
@@ -236,6 +253,34 @@ def chart_image(path, max_width, max_height):
         width, height = image.size
     scale = min(max_width / width, max_height / height)
     return Image(str(path), width=width * scale, height=height * scale)
+
+
+def chart_card(path, max_width, max_height):
+    """A restrained chart frame with an offset, low-contrast shadow."""
+    image = chart_image(path, max_width - 12, max_height - 12)
+    card = Table([[image]], colWidths=[image.drawWidth + 12], rowHeights=[image.drawHeight + 12])
+    card.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, -1), HexColor(CREAM)),
+        ('BOX', (0, 0), (-1, -1), .7, HexColor(SEA)),
+        # Bottom and right rules create a soft, intentional paper-shadow edge.
+        ('LINEBELOW', (0, 0), (-1, -1), 3, HexColor('#DDE7E3')),
+        ('LINEAFTER', (0, 0), (-1, -1), 3, HexColor('#DDE7E3')),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6), ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+        ('TOPPADDING', (0, 0), (-1, -1), 6), ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+    ]))
+    return card
+
+
+def text_card(text, style):
+    """Generous internal padding makes narrative evidence feel placed, not floating."""
+    card = Table([[Paragraph(text, style)]], colWidths=[9.46 * inch])
+    card.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, -1), HexColor('#F8F4E8')),
+        ('BOX', (0, 0), (-1, -1), .45, HexColor('#D7CBA5')),
+        ('LEFTPADDING', (0, 0), (-1, -1), 15), ('RIGHTPADDING', (0, 0), (-1, -1), 15),
+        ('TOPPADDING', (0, 0), (-1, -1), 12), ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+    ]))
+    return card
 
 
 def report(metrics, charts):
@@ -270,31 +315,36 @@ def report(metrics, charts):
     evidence.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,-1),HexColor('#F6F0DF')),('BOX',(0,0),(-1,-1),.4,HexColor('#D7CBA5')),('INNERGRID',(0,0),(-1,-1),.3,HexColor('#D7CBA5')),('LEFTPADDING',(0,0),(-1,-1),14),('RIGHTPADDING',(0,0),(-1,-1),14),('TOPPADDING',(0,0),(-1,-1),12),('BOTTOMPADDING',(0,0),(-1,-1),12)]))
     story += [evidence, PageBreak()]
     # Timeline
-    story += [p("02 / Exhibit A",s['kicker']),p("The Gilligan spike is recent",s['h2']),chart_image(charts['annual'],9.55*inch,3.35*inch),
-              p("The six-year time series does not support a steady, background level of Gilligan coverage. It instead shows a sharp emergence in 2024, followed by sustained coverage in 2025 and 2026 year-to-date.",s['body']),
+    story += [p("02 / Exhibit A",s['kicker']),p("The Gilligan spike is recent",s['h2']),chart_card(charts['annual'],9.55*inch,3.35*inch), Spacer(1,.12*inch),
+              text_card("The six-year time series does not support a steady, background level of Gilligan coverage. It instead shows a sharp emergence in 2024, followed by sustained coverage in 2025 and 2026 year-to-date.",s['body']),
               p("The raw annual counts are: 0 (2020), 2 (2021), 0 (2022), 1 (2023), 110 (2024), 50 (2025), and 44 through Aug. 2, 2026.",s['small']),PageBreak()]
     # Scoreboard
-    story += [p("03 / The scoreboard",s['kicker']),p("Gilligan is not Marvel. That is not the point.",s['h2']),chart_image(charts['scoreboard'],9.55*inch,4.55*inch),
-              p("Broad ecosystems such as Marvel, Star Trek, and Star Wars naturally dominate SlashFilm's output. The useful comparison is with individual shows and franchises. In that company, the expanded Gilligan universe is not a trivial tail event.",s['body']),PageBreak()]
+    story += [p("03 / The scoreboard",s['kicker']),p("Gilligan is not Marvel. That is not the point.",s['h2']),chart_card(charts['scoreboard'],9.55*inch,4.55*inch), Spacer(1,.12*inch),
+              text_card("Broad ecosystems such as Marvel, Star Trek, and Star Wars naturally dominate SlashFilm's output. The useful comparison is with individual shows and franchises. In that company, the expanded Gilligan universe is not a trivial tail event.",s['body']),PageBreak()]
     # direct expanded
     table_data=[["Metric","2024","2025","2026 YTD","Focal total"], ["Direct Gilligan's Island",*[metrics['direct'][y] for y in FOCAL_YEARS],direct], ["Expanded Gilligan universe",*[metrics['annual'][y]['expanded'] for y in FOCAL_YEARS],expanded]]
     t=Table(table_data,colWidths=[3.4*inch,1.55*inch,1.55*inch,1.55*inch,1.55*inch])
-    t.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),HexColor(NAVY)),('TEXTCOLOR',(0,0),(-1,0),white),('FONTNAME',(0,0),(-1,0),'Helvetica-Bold'),('FONTNAME',(0,1),(0,-1),'Helvetica-Bold'),('BACKGROUND',(0,2),(-1,2),HexColor(SAND)),('GRID',(0,0),(-1,-1),.35,HexColor('#C4D5D0')),('ALIGN',(1,0),(-1,-1),'CENTER'),('VALIGN',(0,0),(-1,-1),'MIDDLE'),('TOPPADDING',(0,0),(-1,-1),8),('BOTTOMPADDING',(0,0),(-1,-1),8)]))
+    t.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),HexColor(NAVY)),('TEXTCOLOR',(0,0),(-1,0),white),('FONTNAME',(0,0),(-1,0),DISPLAY_FONT),('FONTNAME',(0,1),(0,-1),LABEL_FONT),('FONTNAME',(1,1),(-1,-1),LABEL_FONT),('BACKGROUND',(0,2),(-1,2),HexColor(SAND)),('GRID',(0,0),(-1,-1),.35,HexColor('#C4D5D0')),('ALIGN',(1,0),(-1,-1),'CENTER'),('VALIGN',(0,0),(-1,-1),'MIDDLE'),('TOPPADDING',(0,0),(-1,-1),8),('BOTTOMPADDING',(0,0),(-1,-1),8)]))
     story += [p("04 / Two ways to count it",s['kicker']),p("The island alone, and the island plus its orbit",s['h2']),t,Spacer(1,.18*inch),
-              p("The difference between these lines is the story. In 2026, Alan Hale Jr. becomes the largest single Gilligan-related subject, even when the article is about The Love Boat, a Western, or a forgotten movie role. That is why the expanded measure belongs in the report - but it is displayed separately from direct show coverage.",s['body']),PageBreak()]
+              text_card("The difference between these lines is the story. In 2026, Alan Hale Jr. becomes the largest single Gilligan-related subject, even when the article is about <i>The Love Boat</i>, a Western, or a forgotten movie role. That is why the expanded measure belongs in the report - but it is displayed separately from direct show coverage.",s['body']),Spacer(1,.18*inch)]
+    orbit = Table([[p("105", ParagraphStyle("orbitnum", parent=s['h2'], fontSize=27, leading=29, textColor=HexColor(CORAL))), p("99", ParagraphStyle("orbitnum2", parent=s['h2'], fontSize=27, leading=29, textColor=HexColor(CORAL)))],
+                   [p("direct-show stories", s['small']), p("cast-led stories added by the expanded measure", s['small'])]], colWidths=[4.7*inch,4.7*inch])
+    orbit.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,-1),HexColor('#EDF5F2')),('BOX',(0,0),(-1,-1),.55,HexColor(SEA)),('INNERGRID',(0,0),(-1,-1),.35,HexColor('#B9DDD7')),('LEFTPADDING',(0,0),(-1,-1),16),('RIGHTPADDING',(0,0),(-1,-1),16),('TOPPADDING',(0,0),(-1,-1),11),('BOTTOMPADDING',(0,0),(-1,-1),11)]))
+    story += [orbit, PageBreak()]
     # cadence
-    story += [p("05 / Cadence",s['kicker']),p("This is recurring coverage, not one nostalgia package",s['h2']),chart_image(charts['monthly'],9.55*inch,3.45*inch),
-              p("The monthly series shows repeated coverage across many months rather than a single anniversary or reboot event. The 2024 surge is particularly concentrated from July through December; 2026 reaches 15 stories in June alone.",s['body']),PageBreak()]
+    story += [p("05 / Cadence",s['kicker']),p("This is recurring coverage, not one nostalgia package",s['h2']),chart_card(charts['monthly'],9.55*inch,3.45*inch), Spacer(1,.12*inch),
+              text_card("The monthly series shows repeated coverage across many months rather than a single anniversary or reboot event. The 2024 surge is particularly concentrated from July through December; 2026 reaches 15 stories in June alone.",s['body']),PageBreak()]
     # cast
-    story += [p("06 / Who is actually being covered?",s['kicker']),p("Gilligan is a show, but the cast is the engine",s['h2']),chart_image(charts['cast'],9.55*inch,3.75*inch),
-              p("The direct-show label is the biggest single bucket, but cast-member articles turn the property into a much wider content reservoir. The report keeps those two forms of coverage visible rather than treating them as interchangeable.",s['body']),PageBreak()]
+    story += [p("06 / Who is actually being covered?",s['kicker']),p("Gilligan is a show, but the cast is the engine",s['h2']),chart_card(charts['cast'],9.55*inch,3.75*inch), Spacer(1,.12*inch),
+              text_card("The direct-show label is the biggest single bucket, but cast-member articles turn the property into a much wider content reservoir. The report keeps those two forms of coverage visible rather than treating them as interchangeable.",s['body']),PageBreak()]
     # Current TV
-    story += [p("07 / The control group",s['kicker']),p("Where are the big current shows?",s['h2']),chart_image(charts['current_tv'],9.55*inch,4.55*inch),
-              p("This chart compares Gilligan with a deliberately mixed group of award-recognized and culturally visible recent TV. It is not a measure of popularity; it measures SlashFilm article frequency. That distinction matters: coverage volume reflects editorial and search strategy, not audience quality or cultural worth.",s['body']),
+    story += [p("07 / The control group",s['kicker']),p("Where are the big current shows?",s['h2']),chart_card(charts['current_tv'],9.55*inch,3.88*inch), Spacer(1,.1*inch),
+              text_card("This chart compares Gilligan with a deliberately mixed group of award-recognized and culturally visible recent TV. It is not a measure of popularity; it measures SlashFilm article frequency. That distinction matters: coverage volume reflects editorial and search strategy, not audience quality or cultural worth.",s['body']),
               p("The control group includes 2024 Emmy winners such as <i>Shogun</i>, <i>Hacks</i>, and <i>Baby Reindeer</i>, plus 2025 winners <i>The Pitt</i>, <i>The Studio</i>, and <i>Adolescence</i>. Popular-series controls include <i>Euphoria</i>, <i>Outer Banks</i>, <i>Bridgerton</i>, <i>The Last of Us</i>, <i>Stranger Things</i>, <i>The White Lotus</i>, <i>Severance</i>, and <i>The Bear</i>.",s['small']),PageBreak()]
     # Findngs
     story += [p("08 / Verdict",s['kicker']),p("So: did you notice a real pattern?",s['h2']),
-              p("<b>Yes, with an asterisk.</b> The data does not show that Gilligan's Island is one of SlashFilm's largest overall content ecosystems. It does show that Gilligan-related coverage became a surprisingly persistent legacy-TV pattern after 2023, large enough to be visible beside contemporary and award-winning television properties.",s['body']),
+              p("<b>Yes, with an asterisk.</b> Gilligan's Island is not one of SlashFilm's largest content ecosystems. But Gilligan-related coverage became a surprisingly persistent legacy-TV pattern after 2023, visible beside contemporary and award-winning television properties.",s['body']),
+              Spacer(1, .12*inch),
               p("The frequency-illusion explanation is not enough on its own. A memorable topic can stand out, but it cannot create 110 Gilligan-related stories in a single year. The better interpretation is that a real coverage pattern exists, and its unusualness comes from the age and apparent cultural distance of the property rather than from it defeating every modern franchise.",s['callout']),
               p("This packet does not attempt to explain why SlashFilm publishes these stories or infer traffic performance. It documents frequency, timing, and comparability - no more, no less.",s['body']),PageBreak()]
     # Appendix
