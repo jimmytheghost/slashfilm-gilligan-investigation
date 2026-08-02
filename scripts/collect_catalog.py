@@ -2,7 +2,7 @@
 """Collect SlashFilm 2026 article metadata from the site's XML sitemaps."""
 
 import csv
-import json
+import argparse
 import re
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -15,8 +15,6 @@ import xml.etree.ElementTree as ET
 BASE = "https://www.slashfilm.com"
 INDEX = f"{BASE}/sitemap_index.xml"
 OUT = Path(__file__).resolve().parents[1] / "data" / "catalog.csv"
-START = datetime.fromisoformat("2026-01-01T00:00:00+00:00")
-END = datetime.fromisoformat("2026-08-03T00:00:00+00:00")
 GILLIGAN_TERMS = (
     "gilligans-island", "alan-hale", "bob-denver", "natalie-schafer", "jim-backus",
     "tina-louise", "russell-johnson", "dawn-wells", "skipper",
@@ -41,7 +39,7 @@ def sitemap_urls():
     return [xml_text(node, "loc") for node in root.iter() if node.tag.endswith("sitemap")]
 
 
-def articles_from_sitemap(url):
+def articles_from_sitemap(url, target_years):
     root = ET.fromstring(fetch(url))
     rows = []
     for node in root.iter():
@@ -52,7 +50,7 @@ def articles_from_sitemap(url):
         if not article_url or not lastmod:
             continue
         published = datetime.fromisoformat(lastmod.replace("Z", "+00:00"))
-        if START <= published < END:
+        if published.year in target_years:
             rows.append((article_url, published.isoformat()))
     return rows
 
@@ -90,10 +88,15 @@ def article_row(item):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--years", nargs="+", type=int, default=[2026])
+    parser.add_argument("--output", type=Path, default=OUT)
+    args = parser.parse_args()
+    target_years = set(args.years)
     sitemap_list = [url for url in sitemap_urls() if "post-sitemap" in url]
     article_items = []
     with ThreadPoolExecutor(max_workers=8) as pool:
-        for result in pool.map(articles_from_sitemap, sitemap_list):
+        for result in pool.map(lambda url: articles_from_sitemap(url, target_years), sitemap_list):
             article_items.extend(result)
     unique = {url: date for url, date in article_items}
     print(f"Found {len(unique)} 2026 sitemap entries.", file=sys.stderr)
@@ -105,13 +108,13 @@ def main():
             if index % 100 == 0:
                 print(f"Fetched {index}/{len(futures)} pages.", file=sys.stderr)
     rows.sort(key=lambda row: row["date"])
-    OUT.parent.mkdir(parents=True, exist_ok=True)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
     fields = ["title", "date", "subject", "gilligan_related", "url", "author", "section", "subject_type", "notes"]
-    with OUT.open("w", newline="", encoding="utf-8") as handle:
+    with args.output.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fields)
         writer.writeheader()
         writer.writerows(rows)
-    print(f"Wrote {len(rows)} rows to {OUT}")
+    print(f"Wrote {len(rows)} rows to {args.output}")
 
 
 if __name__ == "__main__":
