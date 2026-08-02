@@ -2,6 +2,7 @@
 """Repair blank/fragmentary titles from article H1 and document-title metadata."""
 
 import csv
+import argparse
 import html
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -34,19 +35,23 @@ def fetch_title(row):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--years", nargs="+", type=int, default=[2020])
+    parser.add_argument("--output", type=Path, default=OUTPUT)
+    args = parser.parse_args()
     with INPUT.open(encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
-    targets = [row for row in rows if not row["title"] or len(row["title"]) < 60]
+    targets = [row for row in rows if row["date"][:4].isdigit() and int(row["date"][:4]) in args.years and (not row["title"] or len(row["title"]) < 60)]
     print(f"Repairing {len(targets)} titles.")
     with ThreadPoolExecutor(max_workers=16) as pool:
         futures = [pool.submit(fetch_title, row) for row in targets]
         for future in as_completed(futures):
             future.result()
     fields = list(rows[0])
-    with OUTPUT.open("w", newline="", encoding="utf-8") as handle:
+    with args.output.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fields)
         writer.writeheader(); writer.writerows(rows)
-    print(f"Wrote {len(rows)} rows to {OUTPUT}")
+    print(f"Wrote {len(rows)} rows to {args.output}")
 
 
 if __name__ == "__main__":
