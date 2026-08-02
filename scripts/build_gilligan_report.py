@@ -135,7 +135,7 @@ def register_fonts():
 def chart_annual(metrics):
     years = YEARS
     values = [metrics["annual"][y]["expanded"] for y in years]
-    fig, ax = plt.subplots(figsize=(8.6, 3.5), facecolor=CREAM)
+    fig, ax = plt.subplots(figsize=(10, 3.51), facecolor=CREAM)
     ax.set_facecolor(CREAM)
     bars = ax.bar(years, values, color=[MUTED if y < 2024 else CORAL for y in years], width=.62)
     for bar, value in zip(bars, values):
@@ -151,7 +151,7 @@ def chart_scoreboard(metrics):
     selected["Marvel"] = metrics["properties"]["Marvel"]
     pairs = sorted(selected.items(), key=lambda x:x[1], reverse=True)
     names, values = zip(*pairs)
-    fig, ax = plt.subplots(figsize=(8.6, 5.1), facecolor=CREAM); ax.set_facecolor(CREAM)
+    fig, ax = plt.subplots(figsize=(10, 4.77), facecolor=CREAM); ax.set_facecolor(CREAM)
     colors = [CORAL if n == "Gilligan universe" else SEA for n in names]
     ax.barh(range(len(names)), values, color=colors)
     ax.set_yticks(range(len(names)), names, color=INK); ax.invert_yaxis()
@@ -164,7 +164,7 @@ def chart_scoreboard(metrics):
 def chart_monthly(metrics):
     vals = metrics["monthly"]
     months = list(vals); counts = list(vals.values())
-    fig, ax = plt.subplots(figsize=(8.6, 3.4), facecolor=CREAM); ax.set_facecolor(CREAM)
+    fig, ax = plt.subplots(figsize=(10, 3.61), facecolor=CREAM); ax.set_facecolor(CREAM)
     ax.plot(range(len(months)), counts, color=CORAL, linewidth=2.8, marker="o", markersize=4)
     tick_indices = [i for i,m in enumerate(months) if m.endswith("-01") or m.endswith("-07") or i==len(months)-1]
     ax.set_xticks(tick_indices, [months[i] for i in tick_indices], rotation=0)
@@ -179,7 +179,7 @@ def chart_cast(metrics):
     order = ["Gilligan's Island"] + GILLIGAN_CAST
     names = [name for name in order if cast.get(name, 0)]
     values = [cast[name] for name in names]
-    fig, ax = plt.subplots(figsize=(8.6, 3.6), facecolor=CREAM); ax.set_facecolor(CREAM)
+    fig, ax = plt.subplots(figsize=(10, 3.93), facecolor=CREAM); ax.set_facecolor(CREAM)
     colors = [CORAL] + [GOLD, SEA, "#89A7B0", "#BA8C78", "#8DB36F", "#9873A5", "#6B9EA4"]
     bars=ax.bar(names, values, color=colors[:len(names)])
     for b,v in zip(bars,values): ax.text(b.get_x()+b.get_width()/2,v+2,str(v),ha="center",weight="bold",color=INK)
@@ -192,7 +192,7 @@ def chart_cast(metrics):
 def chart_current_tv(metrics):
     pairs=sorted(metrics["current_tv"].items(),key=lambda x:x[1],reverse=True)
     names,values=zip(*pairs)
-    fig,ax=plt.subplots(figsize=(8.6,5.1),facecolor=CREAM); ax.set_facecolor(CREAM)
+    fig,ax=plt.subplots(figsize=(10,4.77),facecolor=CREAM); ax.set_facecolor(CREAM)
     colors=[CORAL if n=="Gilligan universe" else "#6FC7BE" for n in names]
     ax.barh(range(len(names)),values,color=colors); ax.set_yticks(range(len(names)),names,color=INK); ax.invert_yaxis()
     for i,v in enumerate(values): ax.text(v+max(values)*.01,i,str(v),va="center",color=INK,weight="bold",fontsize=9)
