@@ -94,9 +94,13 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--years", nargs="+", type=int, default=[2026])
     parser.add_argument("--output", type=Path, default=OUT)
+    parser.add_argument("--sitemap-start", type=int, default=1)
+    parser.add_argument("--sitemap-end", type=int, default=999)
+    parser.add_argument("--append", action="store_true")
     args = parser.parse_args()
     target_years = set(args.years)
     sitemap_list = [url for url in sitemap_urls() if "post-sitemap" in url]
+    sitemap_list = [url for url in sitemap_list if args.sitemap_start <= int(re.search(r"post-sitemap(\d+)", url).group(1)) <= args.sitemap_end]
     article_items = []
     with ThreadPoolExecutor(max_workers=8) as pool:
         for result in pool.map(lambda url: articles_from_sitemap(url, target_years), sitemap_list):
@@ -113,9 +117,11 @@ def main():
     rows.sort(key=lambda row: row["date"])
     args.output.parent.mkdir(parents=True, exist_ok=True)
     fields = ["title", "date", "subject", "gilligan_related", "url", "author", "section", "subject_type", "notes"]
-    with args.output.open("w", newline="", encoding="utf-8") as handle:
+    mode = "a" if args.append and args.output.exists() else "w"
+    with args.output.open(mode, newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fields)
-        writer.writeheader()
+        if mode == "w":
+            writer.writeheader()
         writer.writerows(rows)
     print(f"Wrote {len(rows)} rows to {args.output}")
 
