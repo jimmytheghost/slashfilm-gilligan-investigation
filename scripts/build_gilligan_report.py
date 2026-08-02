@@ -104,9 +104,9 @@ def compute():
             cast[row["subject"]] += 1
     focal_rows = [row for year in FOCAL_YEARS for row in by_year[year]]
     property_counts = {name: count_aliases(focal_rows, aliases) for name, aliases in COMPARATORS.items()}
-    property_counts["Gilligan universe"] = sum(annual[y]["expanded"] for y in FOCAL_YEARS)
+    property_counts["Gilligan Universe"] = sum(annual[y]["expanded"] for y in FOCAL_YEARS)
     current_counts = {name: count_aliases(focal_rows, aliases) for name, aliases in CURRENT_TV.items()}
-    current_counts["Gilligan universe"] = property_counts["Gilligan universe"]
+    current_counts["Gilligan Universe"] = property_counts["Gilligan Universe"]
     ranks = {}
     for year in FOCAL_YEARS:
         subjects = Counter(row["subject"] for row in by_year[year] if row["subject"])
@@ -171,7 +171,7 @@ def chart_scoreboard(metrics):
     pairs = sorted(selected.items(), key=lambda x:x[1], reverse=True)
     names, values = zip(*pairs)
     fig, ax = plt.subplots(figsize=(10, 4.77), facecolor=CREAM); ax.set_facecolor(CREAM)
-    colors = [CORAL if n == "Gilligan universe" else SEA for n in names]
+    colors = [CORAL if n == "Gilligan Universe" else SEA for n in names]
     ax.barh(range(len(names)), values, color=colors)
     ax.set_yticks(range(len(names)), names, color=INK); ax.invert_yaxis()
     for i,v in enumerate(values): ax.text(v+max(values)*.01, i, str(v), va="center", color=INK, fontproperties=roboto("black"), fontsize=9)
@@ -212,7 +212,7 @@ def chart_current_tv(metrics):
     pairs=sorted(metrics["current_tv"].items(),key=lambda x:x[1],reverse=True)
     names,values=zip(*pairs)
     fig,ax=plt.subplots(figsize=(10,4.77),facecolor=CREAM); ax.set_facecolor(CREAM)
-    colors=[CORAL if n=="Gilligan universe" else "#6FC7BE" for n in names]
+    colors=[CORAL if n=="Gilligan Universe" else "#6FC7BE" for n in names]
     ax.barh(range(len(names)),values,color=colors); ax.set_yticks(range(len(names)),names,color=INK); ax.invert_yaxis()
     for i,v in enumerate(values): ax.text(v+max(values)*.01,i,str(v),va="center",color=INK,fontproperties=roboto("black"),fontsize=9)
     ax.spines[["top","right","bottom","left"]].set_visible(False);ax.tick_params(left=False,bottom=False,labelbottom=False)
@@ -307,7 +307,7 @@ def report(metrics, charts):
     # Framing and method
     story += [p("01 / The question",s['kicker']),p("Pattern or frequency illusion?",s['h2']),
               p("The premise is not that SlashFilm should cover one show instead of another. It is a narrower question: does Gilligan's Island appear often enough in the site's output to qualify as an unusual editorial pattern?",s['body']),
-              p("Two measurements keep the test fair. <b>Direct Gilligan's Island</b> means stories centered on the show. <b>Expanded Gilligan universe</b> includes those stories plus articles centered on the seven principal cast members. The expanded count answers the original observation; the direct count prevents cast coverage from being hidden inside a single show label.",s['body']),
+              p("Two measurements keep the test fair. <b>Direct Gilligan's Island</b> means stories centered on the show. <b>Expanded Gilligan Universe</b> includes those stories plus articles centered on the seven principal cast members. The expanded count answers the original observation; the direct count prevents cast coverage from being hidden inside a single show label.",s['body']),
               p("The report treats 2024-2026 as the comparison window because those years have the most complete headline-based subject normalization. 2020-2023 appears only as historical context for the Gilligan trend.",s['body']),
               p("Headline classification is intentionally transparent: the title and URL determine the primary subject; ambiguous rows use an auditable headline fallback. Exact aliases, not broad subject buckets, drive the selected-franchise comparisons.",s['small']), Spacer(1,.18*inch)]
     evidence = Table([[p("68,398", ParagraphStyle("metric", parent=s['h2'], fontSize=24, leading=25)), p("21,932", ParagraphStyle("metric2", parent=s['h2'], fontSize=24, leading=25)), p("2024-2026", ParagraphStyle("metric3", parent=s['h2'], fontSize=24, leading=25))],
@@ -320,9 +320,9 @@ def report(metrics, charts):
               p("The raw annual counts are: 0 (2020), 2 (2021), 0 (2022), 1 (2023), 110 (2024), 50 (2025), and 44 through Aug. 2, 2026.",s['small']),PageBreak()]
     # Scoreboard
     story += [p("03 / The scoreboard",s['kicker']),p("Gilligan is not Marvel. That is not the point.",s['h2']),chart_card(charts['scoreboard'],9.55*inch,4.55*inch), Spacer(1,.12*inch),
-              text_card("Broad ecosystems such as Marvel, Star Trek, and Star Wars naturally dominate SlashFilm's output. The useful comparison is with individual shows and franchises. In that company, the expanded Gilligan universe is not a trivial tail event.",s['body']),PageBreak()]
+              text_card("Broad ecosystems such as Marvel, Star Trek, and Star Wars naturally dominate SlashFilm's output. The useful comparison is with individual shows and franchises. In that company, the expanded Gilligan Universe is not a trivial tail event.",s['body']),PageBreak()]
     # direct expanded
-    table_data=[["Metric","2024","2025","2026 YTD","Focal total"], ["Direct Gilligan's Island",*[metrics['direct'][y] for y in FOCAL_YEARS],direct], ["Expanded Gilligan universe",*[metrics['annual'][y]['expanded'] for y in FOCAL_YEARS],expanded]]
+    table_data=[["Metric","2024","2025","2026 YTD","Focal total"], ["Direct Gilligan's Island",*[metrics['direct'][y] for y in FOCAL_YEARS],direct], ["Expanded Gilligan Universe",*[metrics['annual'][y]['expanded'] for y in FOCAL_YEARS],expanded]]
     t=Table(table_data,colWidths=[3.4*inch,1.55*inch,1.55*inch,1.55*inch,1.55*inch])
     t.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),HexColor(NAVY)),('TEXTCOLOR',(0,0),(-1,0),white),('FONTNAME',(0,0),(-1,0),DISPLAY_FONT),('FONTNAME',(0,1),(0,-1),LABEL_FONT),('FONTNAME',(1,1),(-1,-1),LABEL_FONT),('BACKGROUND',(0,2),(-1,2),HexColor(SAND)),('GRID',(0,0),(-1,-1),.35,HexColor('#C4D5D0')),('ALIGN',(1,0),(-1,-1),'CENTER'),('VALIGN',(0,0),(-1,-1),'MIDDLE'),('TOPPADDING',(0,0),(-1,-1),8),('BOTTOMPADDING',(0,0),(-1,-1),8)]))
     story += [p("04 / Two ways to count it",s['kicker']),p("The island alone, and the island plus its orbit",s['h2']),t,Spacer(1,.18*inch),
@@ -339,7 +339,7 @@ def report(metrics, charts):
               text_card("The direct-show label is the biggest single bucket, but cast-member articles turn the property into a much wider content reservoir. The report keeps those two forms of coverage visible rather than treating them as interchangeable.",s['body']),PageBreak()]
     # Current TV
     story += [p("07 / The control group",s['kicker']),p("Where are the big current shows?",s['h2']),chart_card(charts['current_tv'],9.55*inch,3.88*inch), Spacer(1,.1*inch),
-              text_card("This chart compares Gilligan with a deliberately mixed group of award-recognized and culturally visible recent TV. It is not a measure of popularity; it measures SlashFilm article frequency. That distinction matters: coverage volume reflects editorial and search strategy, not audience quality or cultural worth.",s['body']),
+              text_card("Gilligan Universe is covered more often than every current show here except <i>Stranger Things</i>: <i>The Pitt</i>, <i>Severance</i>, <i>The Last of Us</i>, <i>Euphoria</i>, <i>Outer Banks</i>, and every award-season title. That is not a cultural-ranking claim. It is strong evidence that something unusual is happening in SlashFilm's editorial mix.",s['body']),
               p("The control group includes 2024 Emmy winners such as <i>Shogun</i>, <i>Hacks</i>, and <i>Baby Reindeer</i>, plus 2025 winners <i>The Pitt</i>, <i>The Studio</i>, and <i>Adolescence</i>. Popular-series controls include <i>Euphoria</i>, <i>Outer Banks</i>, <i>Bridgerton</i>, <i>The Last of Us</i>, <i>Stranger Things</i>, <i>The White Lotus</i>, <i>Severance</i>, and <i>The Bear</i>.",s['small']),PageBreak()]
     # Findngs
     story += [p("08 / Verdict",s['kicker']),p("So: did you notice a real pattern?",s['h2']),
