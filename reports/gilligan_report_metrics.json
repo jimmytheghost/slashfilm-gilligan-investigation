@@ -1,0 +1,120 @@
+{
+  "annual": {
+    "2020": {
+      "articles": 7224,
+      "expanded": 0
+    },
+    "2021": {
+      "articles": 9950,
+      "expanded": 2
+    },
+    "2022": {
+      "articles": 17935,
+      "expanded": 0
+    },
+    "2023": {
+      "articles": 11357,
+      "expanded": 1
+    },
+    "2024": {
+      "articles": 7723,
+      "expanded": 110
+    },
+    "2025": {
+      "articles": 9945,
+      "expanded": 50
+    },
+    "2026": {
+      "articles": 4264,
+      "expanded": 44
+    }
+  },
+  "direct": {
+    "2020": 0,
+    "2021": 2,
+    "2022": 0,
+    "2023": 1,
+    "2024": 66,
+    "2025": 28,
+    "2026": 11
+  },
+  "monthly": {
+    "2021-10": 2,
+    "2023-11": 1,
+    "2024-02": 3,
+    "2024-03": 6,
+    "2024-04": 2,
+    "2024-05": 5,
+    "2024-06": 6,
+    "2024-07": 13,
+    "2024-08": 10,
+    "2024-09": 17,
+    "2024-10": 21,
+    "2024-11": 15,
+    "2024-12": 12,
+    "2025-01": 12,
+    "2025-02": 7,
+    "2025-03": 9,
+    "2025-04": 9,
+    "2025-05": 6,
+    "2025-06": 3,
+    "2025-07": 2,
+    "2025-08": 1,
+    "2025-10": 1,
+    "2026-02": 4,
+    "2026-03": 1,
+    "2026-04": 6,
+    "2026-05": 8,
+    "2026-06": 15,
+    "2026-07": 9,
+    "2026-08": 1
+  },
+  "cast": {
+    "Gilligan's Island": 108,
+    "Bob Denver": 16,
+    "Jim Backus": 9,
+    "Tina Louise": 14,
+    "Russell Johnson": 19,
+    "Natalie Schafer": 5,
+    "Dawn Wells": 3,
+    "Alan Hale Jr.": 33
+  },
+  "properties": {
+    "Batman": 390,
+    "Breaking Bad": 50,
+    "The Simpsons": 174,
+    "Stranger Things": 163,
+    "Yellowstone": 273,
+    "The Pitt": 134,
+    "Landman": 107,
+    "Harry Potter": 149,
+    "Game of Thrones": 303,
+    "Star Wars": 807,
+    "Star Trek": 1210,
+    "Marvel": 1234,
+    "Gilligan universe": 204
+  },
+  "current_tv": {
+    "Euphoria": 33,
+    "Outer Banks": 9,
+    "Bridgerton": 15,
+    "The Last of Us": 94,
+    "Stranger Things": 163,
+    "The White Lotus": 69,
+    "Severance": 128,
+    "The Bear": 40,
+    "Shogun": 15,
+    "Hacks": 5,
+    "Baby Reindeer": 3,
+    "The Pitt": 134,
+    "The Studio": 27,
+    "Adolescence": 9,
+    "Gilligan universe": 204
+  },
+  "ranks": {
+    "2024": 8,
+    "2025": 22,
+    "2026": 16
+  },
+  "focal_total": 21932
+}
