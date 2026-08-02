@@ -368,10 +368,10 @@ def report(metrics, charts):
               Spacer(1, .08*inch), p("What I cannot tell you is why SlashFilm keeps publishing them or whether they perform well. This only answers the first question: the pattern is real.",s['small']),PageBreak()]
     # Appendix
     story += [p("09 / Notes on Method",s['kicker']),p("How to Read the Evidence",s['h2']),
-              p("Source: SlashFilm article pages indexed through the site's XML sitemaps and collected into year-specific CSVs. The catalog includes title, publication time, URL, primary subject, and Gilligan-related flag. The analysis includes 68,398 total articles from 2020 through Aug. 2, 2026.",s['body']),
-              p("Selected-property counts use transparent title/URL aliases. This avoids treating platform names such as HBO, Netflix, or streaming as subjects. It also means the comparison is reproducible, but not a claim that every possible mention in body text has been counted.",s['body']),
-              p("External context references: Television Academy, 2024 and 2025 Emmy Awards nominees and winners; Nielsen annual streaming rankings/ARTEY awards. These sources select the current-TV control group; the coverage counts themselves come from SlashFilm.",s['body']),
-              p("Limitations: 2020-2023 have less complete subject normalization, so they are used only for the historical Gilligan trend. 2026 is a partial year. Article frequency measures editorial output, not clicks, cultural importance, or audience size.",s['body']),
+              p("To build this, I pulled SlashFilm article pages from the site's XML sitemaps and put them into year-by-year CSVs. Each row has a title, publication time, URL, primary subject, and Gilligan-related flag. Altogether, that is 68,398 articles from 2020 through Aug. 2, 2026.",s['body']),
+              p("For the show and franchise comparisons, I used titles and URLs. That keeps the count focused on what a story is actually about. An article about <i>Task</i> does not become a story about “streaming” just because it is on HBO. And these are article counts, not every possible body-text mention.",s['body']),
+              p("I picked the current-TV comparison group from recent Emmy winners and nominees, plus Nielsen's annual streaming lists. Those sources helped choose the shows. The actual story counts all come from SlashFilm.",s['body']),
+              p("A few caveats. The older 2020-2023 rows have less complete subject labeling, so I only use them to show the big historical Gilligan swing. 2026 is a partial year. And a high article count does not prove clicks, cultural importance, or audience size. It only shows what SlashFilm published, and how often.",s['body']),
               Spacer(1,.18*inch),p("The data has spoken. It brought a coconut radio.",s['callout'])]
     doc.build(story,onFirstPage=header_footer,onLaterPages=header_footer)
 
