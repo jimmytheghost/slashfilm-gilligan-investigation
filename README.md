@@ -1,21 +1,23 @@
 # SlashFilm Gilligan Investigation
 
-Catalog and analyze SlashFilm coverage across a calendar year, with special attention to coverage of *Gilligan's Island* and its principal cast. The central question is whether SlashFilm covers this 60-year-old sitcom and its cast unusually often compared with culturally prominent properties such as Batman or *Breaking Bad*.
+A data-backed answer to a very specific question: why does SlashFilm seem to publish so many stories about *Gilligan's Island* and its cast?
+
+The completed catalog contains 68,398 SlashFilm stories published from 2020 through Aug. 2, 2026. The accompanying report finds 204 Gilligan-related stories from 2024 through that date, including 110 in 2024 alone. The Gilligan Universe appears more often in this data window than *The Simpsons*, *Stranger Things*, *Harry Potter*, *The Pitt*, and *Breaking Bad*.
 
 ## Project goals
 
-- Build a reproducible catalog of SlashFilm stories.
+- Preserve a reproducible catalog of SlashFilm stories.
 - Classify each story by primary subject.
-- Measure Gilligan-related coverage against major comparison IP.
-- Generate charts showing coverage volume and share.
+- Measure Gilligan-related coverage against selected franchises and current TV shows.
+- Generate the finished, public-facing investigation packet.
 
 ## Repository layout
 
-- `data/catalog.csv` — article-level catalog
-- `data/README.md` — data handling notes
-- `scripts/` — collection, cleaning, and chart-generation code
-- `charts/` — generated visualizations and chart notes
-- `reports/` — written findings and research outputs
+- `data/catalog_processed_<year>.csv` — canonical processed article catalogs for 2020-2026
+- `scripts/build_gilligan_report.py` — reproducibly builds the report and its charts
+- `output/pdf/slashfilm-gilligans-island-coverage-report.pdf` — finished report packet
+- `reports/gilligan_report_metrics.json` — derived report metrics
+- `data/`, `scripts/`, `charts/`, and `reports/` — supporting notes and project assets
 
 ## Data fields
 
@@ -37,10 +39,14 @@ Dates should preserve SlashFilm's displayed publication timestamp. Analysis scri
 
 Each catalog row should include the source URL. Headline-derived classifications are acceptable when unambiguous; confusing headlines should be checked with a brief article read and explained in `notes`. Do not silently infer missing publication dates.
 
-## Scope
-
-Initial scope: SlashFilm stories published during 2026, beginning January 1 and continuing through the current date.
-
 ## Status
 
-Repository setup is complete. Data collection and charting are next.
+The initial investigation is complete. The current catalog covers 2020 through Aug. 2, 2026; 2026 is year-to-date. Year-specific CSVs remain the source of truth so future collection or reprocessing can happen in manageable batches.
+
+## Rebuild the report
+
+```bash
+python3 scripts/build_gilligan_report.py
+```
+
+This refreshes the PDF in `output/pdf/` and the derived metrics JSON in `reports/` from the canonical yearly processed CSVs.
